@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShiftMind – Intelligentes Dienstplanmanagement</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1a1a2e;--blue:#4f9cf9;--blue-dark:#2563eb;--blue-light:#dbeafe;
+  --purple:#8b5cf6;--green:#10b981;--green-bg:#d1fae5;
+  --red:#ef4444;--red-bg:#fee2e2;--amber:#f59e0b;--amber-bg:#fef3c7;
+  --bg:#f7f8fc;--surface:#fff;--border:#e5e7eb;
+  --text:#0d1117;--muted:#6b7280;--subtle:#9ca3af;
+  --sidebar-w:230px;--radius:10px;--rad-sm:6px;
+  --shadow:0 2px 8px rgba(0,0,0,0.08);--shadow-lg:0 8px 32px rgba(0,0,0,0.14);
+  --trans:150ms ease;
+}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased;font-size:14px}
+.hidden{display:none!important}
+.login-split{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+.login-hero{background:var(--navy);padding:60px 48px;display:flex;align-items:center;position:relative;overflow:hidden}
+.login-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(79,156,249,.15),transparent 60%)}
+.hero-content{position:relative;z-index:1;max-width:440px}
+.brand-name{font-size:18px;font-weight:700;color:#fff}
+.login-h1{font-size:48px;font-weight:700;color:#fff;line-height:1.05;letter-spacing:-1.5px;margin-bottom:14px}
+.login-sub{font-size:15px;color:#a8d4fd;margin-bottom:40px}
+.login-stats{display:flex;gap:40px;margin-bottom:32px}
+.stat-num{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:500;color:#74b4fa;display:block}
+.stat-lbl{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.8px}
+.demo-box{padding:14px 16px;background:rgba(255,255,255,.05);border-radius:10px;border:1px solid rgba(255,255,255,.07);font-size:12px;color:#94a3b8;line-height:1.7}
+.demo-box strong{color:#e2e8f0}
+.login-form-panel{background:#fff;display:flex;align-items:center;justify-content:center;padding:48px}
+.login-form-wrap{width:100%;max-width:360px}
+.login-form-wrap h2{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px}
+.login-hint{color:var(--muted);margin-bottom:24px;font-size:13px}
+.error-box{background:var(--red-bg);border:1px solid #fecaca;border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:13px;color:#991b1b}
+.field{margin-bottom:14px}
+label{font-size:12px;font-weight:500;color:var(--muted);display:block;margin-bottom:4px}
+input,select,textarea{border:1px solid var(--border);border-radius:var(--rad-sm);padding:8px 10px;font-size:13px;font-family:inherit;color:var(--text);background:var(--surface);outline:none;transition:border-color var(--trans);width:100%}
+input:focus,select:focus{border-color:var(--blue)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rad-sm);font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all var(--trans);white-space:nowrap}
+.btn-primary{background:var(--blue-dark);color:#fff}.btn-primary:hover{background:#1d4ed8}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}.btn-ghost:hover{background:var(--bg)}
+.btn-ai{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-full{width:100%;justify-content:center;padding:10px}
+.btn-icon{padding:6px;border-radius:6px}
+.app{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100;transition:transform .3s}
+.sb-header{padding:16px 16px 8px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:8px}
+.sb-brand{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;color:#fff}
+.facility-pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:10px 12px;margin:0 8px 12px;display:flex;align-items:center;gap:8px}
+.fac-name{font-size:12px;font-weight:600;color:#e2e8f0;line-height:1.2}
+.fac-role{font-size:10px;color:var(--blue);text-transform:uppercase;letter-spacing:.5px}
+.nav-section{padding:0 8px;margin-bottom:4px}
+.nav-lbl{display:block;font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#64748b;padding:8px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--rad-sm);color:#94a3b8;font-size:13px;cursor:pointer;transition:all var(--trans);margin-bottom:1px;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{color:#e2e8f0;background:rgba(255,255,255,.06)}
+.nav-item.active{color:#fff;background:rgba(79,156,249,.18)}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:600}
+.nav-badge.ai{background:linear-gradient(135deg,var(--blue),var(--purple))}
+.sb-footer{margin-top:auto;padding:12px 8px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:8px}
+.user-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#1e40af);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.user-name-sb{font-size:12px;font-weight:500;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-email-sb{font-size:10px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-weight:600;font-size:14px}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.content{padding:24px;flex:1}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.ph h1{font-size:22px;font-weight:700;letter-spacing:-.4px}
+.ph p{font-size:13px;color:var(--muted);margin-top:1px}
+.ph-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.view{display:none}.view.active{display:block}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.card-title{font-size:11px;font-weight:600;margin-bottom:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.stat-val{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:600;line-height:1}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:4px}
+.stat-card.blue .stat-val{color:var(--blue-dark)}.stat-card.red .stat-val{color:var(--red)}
+.stat-card.green .stat-val{color:var(--green)}.stat-card.amber .stat-val{color:var(--amber)}
+.sched-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.sched-scroll{overflow-x:auto}
+.sched-table{width:100%;border-collapse:collapse;min-width:720px}
+.sched-table th{padding:10px 6px;text-align:center;border-bottom:1px solid var(--border);border-right:1px solid var(--border);background:var(--bg);font-size:11px;font-weight:600;color:var(--muted)}
+.sched-table th:first-child{text-align:left;padding-left:12px;width:120px}
+.sched-table th:last-child{border-right:none}
+.th-dow{font-size:12px;font-weight:600;color:var(--text);display:block}
+.th-date{font-size:10px;color:var(--muted)}
+.th-today{background:#eff6ff}.th-today .th-dow{color:var(--blue-dark)}
+.row-emp{border-right:1px solid var(--border);padding:8px 10px;background:var(--bg);vertical-align:top}
+.emp-row-name{font-size:11.5px;font-weight:500;line-height:1.3}
+.shift-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:4px;vertical-align:top;min-height:68px;min-width:90px}
+.shift-cell:last-child{border-right:none}
+.shift-chip{border-radius:5px;padding:4px 6px;margin-bottom:3px;position:relative;transition:all var(--trans)}
+.shift-chip:hover{filter:brightness(.93)}
+.chip-lbl{font-size:10px;font-weight:600;display:block}
+.chip-time{font-family:'JetBrains Mono',monospace;font-size:9px;opacity:.8;display:block}
+.chip-del{position:absolute;top:2px;right:3px;background:none;border:none;cursor:pointer;opacity:0;font-size:11px;padding:1px 3px;border-radius:3px;transition:opacity var(--trans)}
+.shift-chip:hover .chip-del{opacity:.7}
+.absence-chip{border-radius:5px;padding:4px 6px;font-size:10px;font-weight:500;background:#f3f4f6;color:var(--muted);display:flex;align-items:center;gap:3px;margin-bottom:3px}
+.add-btn{width:100%;background:none;border:1.5px dashed #d1d5db;border-radius:5px;color:var(--subtle);font-size:18px;cursor:pointer;padding:5px;display:flex;align-items:center;justify-content:center;transition:all var(--trans);margin-top:2px}
+.add-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
+.sched-row:last-child .shift-cell{border-bottom:none}
+.v-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.v-sum-card{padding:14px;border-radius:var(--radius);text-align:center}
+.v-sum-num{font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.v-list{display:flex;flex-direction:column;gap:8px}
+.v-item{display:flex;align-items:flex-start;gap:10px;padding:12px;border-radius:var(--radius);border:1px solid}
+.v-critical{background:var(--red-bg);border-color:#fecaca}
+.v-warning{background:var(--amber-bg);border-color:#fde68a}
+.v-msg{font-size:13px;font-weight:500}
+.v-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;margin-left:auto;flex-shrink:0}
+.badge-red{background:var(--red-bg);color:#991b1b}
+.badge-amber{background:var(--amber-bg);color:#92400e}
+.badge-blue{background:var(--blue-light);color:#1e40af}
+.filter-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.emp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.emp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);transition:all var(--trans)}
+.emp-card:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(79,156,249,.15)}
+.emp-card-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.emp-big-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.emp-fullname{font-size:14px;font-weight:600}
+.emp-title{font-size:11px;color:var(--muted)}
+.emp-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.tag{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:10px;font-weight:500;color:var(--muted)}
+.tag-blue{background:var(--blue-light);border-color:#93c5fd;color:#1e40af}
+.emp-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+.wh-bar-wrap{background:var(--bg);border-radius:100px;height:8px;overflow:hidden;margin-top:4px}
+.wh-bar{height:100%;border-radius:100px;transition:width .5s}
+.abs-list{display:flex;flex-direction:column;gap:8px}
+.abs-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.abs-icon{font-size:20px;flex-shrink:0}
+.abs-emp{font-size:13px;font-weight:600}
+.abs-date{font-size:11px;color:var(--muted)}
+.abs-type-badge{font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px;margin-left:auto}
+.ai-layout{display:grid;grid-template-columns:270px 1fr;gap:16px}
+.ai-chat{display:flex;flex-direction:column;gap:10px;min-height:280px;max-height:400px;overflow-y:auto;padding:4px 0}
+.ai-msg{display:flex;align-items:flex-start;gap:8px}
+.ai-av{width:28px;height:28px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:var(--blue);font-weight:700}
+.ai-bubble{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.6;max-width:560px}
+.ai-bubble-user{background:var(--blue-light);border-color:#93c5fd}
+.ai-result{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-top:12px}
+.ai-result-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);background:#eff6ff}
+.ai-result-hdr h4{font-size:13px;font-weight:600}
+.sub-item{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--border);border-radius:var(--rad-sm);background:var(--surface);margin-bottom:6px}
+.sub-match{margin-left:auto;font-size:10px;font-weight:700;color:var(--green)}
+.pulse{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite;margin-right:4px}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.dot-anim span{animation:dotA 1.2s infinite;opacity:0;display:inline-block}
+.dot-anim span:nth-child(2){animation-delay:.2s}
+.dot-anim span:nth-child(3){animation-delay:.4s}
+@keyframes dotA{0%,100%{opacity:0}50%{opacity:1}}
+.wh-table{width:100%;border-collapse:collapse}
+.wh-table th,.wh-table td{padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px;text-align:left}
+.wh-table th{font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-size:10px}
+.mono{font-family:'JetBrains Mono',monospace}
+.settings-layout{display:grid;grid-template-columns:160px 1fr;gap:20px}
+.settings-nav{display:flex;flex-direction:column;gap:2px}
+.settings-nav-btn{padding:8px 12px;border-radius:var(--rad-sm);font-size:13px;cursor:pointer;transition:all var(--trans);border:none;background:none;text-align:left;color:var(--text);width:100%}
+.settings-nav-btn:hover{background:var(--border)}
+.settings-nav-btn.active{background:var(--blue-light);color:var(--blue-dark);font-weight:500}
+.audit-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rad-sm);margin-bottom:6px}
+.audit-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);white-space:nowrap}
+.audit-action{font-size:12px;flex:1}
+.audit-user{font-size:11px;color:var(--muted)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(2px)}
+.modal{background:var(--surface);border-radius:var(--radius);width:100%;max-width:500px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
+.modal-lg{max-width:620px}
+.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.modal-hdr h3{font-size:15px;font-weight:600}
+.modal-body{padding:20px;overflow-y:auto;flex:1}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.form-tabs{display:flex;gap:2px;margin-bottom:16px;background:var(--bg);padding:3px;border-radius:8px}
+.form-tab{flex:1;padding:6px;border:none;background:none;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;color:var(--muted);transition:all var(--trans)}
+.form-tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.tab-pane{display:none}.tab-pane.active{display:block}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.violation-preview{background:var(--amber-bg);border:1px solid #fde68a;border-radius:var(--rad-sm);padding:10px 12px;font-size:12px;color:#92400e;margin-top:8px}
+.absence-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.abs-type-btn{padding:8px 4px;border:2px solid var(--border);border-radius:var(--rad-sm);background:transparent;cursor:pointer;font-size:12px;transition:all var(--trans)}
+.abs-type-btn.active{border-color:var(--blue);background:var(--blue-light);font-weight:600}
+.check-group{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:4px}
+.check-item{display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer}
+.check-item input{width:auto}
+.qualif-list{display:flex;flex-direction:column;gap:8px}
+.qualif-item{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
+.qualif-item input{width:auto}
+.search-box{display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:var(--rad-sm);padding:5px 10px;background:var(--surface)}
+.search-box input{border:none;padding:0;font-size:13px;outline:none;min-width:130px;width:auto}
+.toast-container{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:8px;z-index:9999}
+.toast{padding:10px 16px;border-radius:var(--radius);font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);animation:slideIn .2s ease;max-width:300px}
+.toast-success{background:var(--green-bg);border:1px solid #86efac;color:#065f46}
+.toast-error{background:var(--red-bg);border:1px solid #fecaca;color:#991b1b}
+.toast-info{background:var(--blue-light);border:1px solid #93c5fd;color:#1e40af}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
+.empty-state h3{font-size:14px;font-weight:500;margin-bottom:4px;color:var(--text)}
+.divider{border:none;border-top:1px solid var(--border);margin:14px 0}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99}
+.mobile-hdr{display:none;position:fixed;top:0;left:0;right:0;height:50px;background:var(--surface);border-bottom:1px solid var(--border);align-items:center;justify-content:space-between;padding:0 16px;z-index:90}
+
+/* ── DIENSTAUSFALL SIGNAL BUTTON ── */
+.signal-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:6px 14px;border-radius:var(--rad-sm);
+  background:#dc2626;color:#fff;
+  font-size:12.5px;font-weight:700;
+  border:none;cursor:pointer;
+  box-shadow:0 0 0 0 rgba(220,38,38,0.5);
+  animation:signal-pulse 2s infinite;
+  transition:all var(--trans);
+  letter-spacing:.2px;
+  position:relative;
+  overflow:hidden;
+}
+.signal-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);
+}
+.signal-btn:hover{background:#b91c1c;transform:scale(1.02);box-shadow:0 4px 20px rgba(220,38,38,.45)}
+@keyframes signal-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(220,38,38,0.4)}
+  50%{box-shadow:0 0 0 8px rgba(220,38,38,0)}
+}
+.signal-dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:sdot 1s infinite}
+@keyframes sdot{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* SIGNAL MODAL */
+.smo-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);
+  z-index:2000;display:flex;align-items:center;justify-content:center;
+  padding:20px;backdrop-filter:blur(6px);
+  animation:fadein .18s ease;
+}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.smo-box{
+  background:#fff;border-radius:16px;
+  width:100%;max-width:580px;max-height:90vh;
+  overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:0 24px 80px rgba(0,0,0,.3);
+  animation:boxin .22s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes boxin{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:none}}
+.smo-head{
+  background:linear-gradient(135deg,#dc2626,#991b1b);
+  color:#fff;padding:20px 24px;display:flex;align-items:center;gap:12px;
+}
+.smo-head-icon{font-size:28px;flex-shrink:0;animation:shake .5s infinite}
+@keyframes shake{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+.smo-head h2{font-size:18px;font-weight:700;letter-spacing:-.3px}
+.smo-head p{font-size:12px;opacity:.85;margin-top:2px}
+.smo-head .smo-close{margin-left:auto;background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;cursor:pointer;padding:6px;display:flex;transition:all var(--trans)}
+.smo-head .smo-close:hover{background:rgba(255,255,255,.35)}
+.smo-body{padding:20px 24px;overflow-y:auto;flex:1}
+.smo-section{margin-bottom:18px}
+.smo-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px;display:block}
+.smo-shift-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+.smo-shift-card{
+  padding:10px 12px;border-radius:8px;border:2px solid var(--border);
+  cursor:pointer;transition:all var(--trans);background:var(--surface);
+}
+.smo-shift-card:hover{border-color:#dc2626}
+.smo-shift-card.selected{border-color:#dc2626;background:#fef2f2}
+.smo-shift-label{font-size:12px;font-weight:700}
+.smo-shift-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+.smo-msg-box{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;color:var(--text);outline:none;resize:none;line-height:1.6;transition:border-color var(--trans)}
+.smo-msg-box:focus{border-color:#dc2626}
+.smo-char-count{font-size:10px;color:var(--muted);text-align:right;margin-top:3px}
+.smo-emp-list{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto}
+.smo-emp-list::-webkit-scrollbar{width:4px}
+.smo-emp-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.smo-emp-row{
+  display:flex;align-items:center;gap:10px;padding:9px 12px;
+  border:1px solid var(--border);border-radius:8px;
+  cursor:pointer;transition:all var(--trans);background:var(--surface);
+}
+.smo-emp-row:hover{border-color:#dc2626;background:#fef2f2}
+.smo-emp-row.selected{border-color:#dc2626;background:#fef2f2}
+.smo-emp-check{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all var(--trans)}
+.smo-emp-row.selected .smo-emp-check{background:#dc2626;border-color:#dc2626;color:#fff}
+.smo-emp-name{font-size:13px;font-weight:500;flex:1}
+.smo-emp-info{font-size:10px;color:var(--muted)}
+.smo-emp-phone{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto}
+.smo-emp-qual{font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:var(--blue-light);color:#1e40af}
+.smo-sel-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.smo-sel-all{font-size:12px;color:#dc2626;cursor:pointer;font-weight:600;background:none;border:none;padding:0}
+.smo-sel-count{font-size:12px;color:var(--muted)}
+.smo-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.smo-preview-count{font-size:13px;color:var(--muted)}
+.smo-preview-count strong{color:var(--text)}
+.btn-signal-send{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 20px;border-radius:var(--rad-sm);
+  background:#dc2626;color:#fff;font-size:13px;font-weight:700;
+  border:none;cursor:pointer;transition:all var(--trans);
+}
+.btn-signal-send:hover{background:#b91c1c;box-shadow:0 4px 16px rgba(220,38,38,.35)}
+.btn-signal-send:disabled{background:var(--muted);cursor:not-allowed}
+
+/* SENDING ANIMATION */
+.smo-sending{text-align:center;padding:32px 24px}
+.smo-sending h3{font-size:16px;font-weight:700;margin-bottom:6px}
+.smo-sending p{font-size:13px;color:var(--muted)}
+.smo-progress{background:var(--border);border-radius:100px;height:6px;margin:16px 0;overflow:hidden}
+.smo-progress-bar{height:100%;background:linear-gradient(90deg,#dc2626,#f87171);border-radius:100px;width:0%;transition:width .4s ease}
+.smo-results{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto}
+.smo-result-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;font-size:12px}
+.smo-result-ok{background:#f0fdf4;color:#166534}
+.smo-result-err{background:#fef2f2;color:#991b1b}
+.smo-result-wait{background:var(--bg);color:var(--muted)}
+.smo-summary{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 16px;margin-top:12px;text-align:center}
+.smo-summary h4{font-size:15px;font-weight:700;color:#166534;margin-bottom:2px}
+.smo-summary p{font-size:12px;color:#166534;opacity:.8}
+/* SMS Preview bubble */
+.sms-preview{
+  background:#e5e5ea;border-radius:14px;border-bottom-left-radius:4px;
+  padding:12px 14px;font-size:13px;line-height:1.55;
+  max-width:320px;position:relative;margin-bottom:4px;
+}
+.sms-preview::before{
+  content:'';position:absolute;bottom:-8px;left:12px;
+  border:8px solid transparent;border-top-color:#e5e5ea;border-bottom:0;border-left:0;
+}
+.sms-label{font-size:10px;color:var(--muted);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+@media(max-width:900px){
+  .login-split{grid-template-columns:1fr}.login-hero{display:none}
+  .app{padding-top:50px}.sidebar{transform:translateX(-100%)}.sidebar.open{transform:none}
+  .main{margin-left:0}.sidebar-overlay{display:block}.mobile-hdr{display:flex}
+  .ai-layout{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}
+  .field-row{grid-template-columns:1fr}.v-summary{grid-template-columns:1fr}
+  .settings-layout{grid-template-columns:1fr}
+}
+@media(max-width:600px){.content{padding:16px}.ph h1{font-size:20px}}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-split">
+    <div class="login-hero">
+      <div class="hero-content">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:40px">
+          <svg width="34" height="34" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#0d1117"/><path d="M8 20h6l4-8 6 16 4-12 4 4h6" stroke="#4f9cf9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="brand-name">ShiftMind</span>
+        </div>
+        <h1 class="login-h1">Dienstplanung.<br>Neu gedacht.</h1>
+        <p class="login-sub">KI-gestützt · ArbZG-konform · DSGVO-sicher</p>
+        <div class="login-stats">
+          <div><span class="stat-num">KI</span><span class="stat-lbl">Optimierung</span></div>
+          <div><span class="stat-num">100%</span><span class="stat-lbl">Rechtssicher</span></div>
+          <div><span class="stat-num">∞</span><span class="stat-lbl">Einrichtungen</span></div>
+        </div>
+        <div class="demo-box">
+          <strong>Demo-Zugänge:</strong><br>
+          Leitung: anna.mueller@pflege.de / demo123<br>
+          Mitarbeiter: t.schmidt@pflege.de / demo123<br>
+          Admin: admin@pflege.de / admin123
+        </div>
+      </div>
+    </div>
+    <div class="login-form-panel">
+      <div class="login-form-wrap">
+        <h2>Anmelden</h2>
+        <p class="login-hint">Zugangsdaten eingeben und loslegen.</p>
+        <div id="login-error" class="error-box hidden"></div>
+        <div class="field"><label>E-Mail</label><input type="email" id="login-email" value="anna.mueller@pflege.de"></div>
+        <div class="field"><label>Passwort</label><input type="password" id="login-pw" value="demo123" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <button class="btn btn-primary btn-full" style="margin-top:8px" onclick="doLogin()">Anmelden →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="app-screen" class="hidden">
+  <div class="mobile-hdr">
+    <button class="btn btn-ghost btn-icon" onclick="toggleSidebar()">☰</button>
+    <span style="font-weight:700;font-size:15px">ShiftMind</span>
+    <div class="user-av" id="mob-av" style="width:28px;height:28px;font-size:10px">M</div>
+  </div>
+  <div class="app">
+    <nav class="sidebar" id="sidebar">
+      <div class="sb-header">
+        <div class="sb-brand">
+          <svg width="24" height="24" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#0d1117"/><path d="M8 20h6l4-8 6 16 4-12 4 4h6" stroke="#4f9cf9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          ShiftMind
+        </div>
+      </div>
+      <div class="facility-pill">
+        <span style="font-size:18px">🏥</span>
+        <div><div class="fac-name">Pflegezentrum Sonnenschein</div><div class="fac-role" id="sb-role">Leitung</div></div>
+      </div>
+      <div class="nav-section">
+        <span class="nav-lbl">Planung</span>
+        <button class="nav-item active" onclick="navigate('schedule')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Dienstplan
+        </button>
+        <button class="nav-item" onclick="navigate('ai')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>KI-Assistent
+          <span class="nav-badge ai">KI</span>
+        </button>
+        <button class="nav-item" onclick="navigate('violations')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Verstöße
+          <span class="nav-badge" id="viol-badge" style="display:none">0</span>
+        </button>
+      </div>
+      <div class="nav-section">
+        <span class="nav-lbl">Personal</span>
+        <button class="nav-item" onclick="navigate('employees')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Mitarbeiter
+        </button>
+        <button class="nav-item" onclick="navigate('absences')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h8"/></svg>Abwesenheiten
+        </button>
+        <button class="nav-item" onclick="navigate('workhours')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Arbeitszeitkonto
+        </button>
+      </div>
+      <div class="nav-section" id="admin-nav" style="display:none">
+        <span class="nav-lbl">Verwaltung</span>
+        <button class="nav-item" onclick="navigate('settings')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2"/></svg>Einstellungen
+        </button>
+        <button class="nav-item" onclick="navigate('audit')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Audit-Log
+        </button>
+      </div>
+      <div class="sb-footer">
+        <div class="user-av" id="sb-av">M</div>
+        <div style="flex:1;min-width:0"><div class="user-name-sb" id="sb-name">Nutzer</div><div class="user-email-sb" id="sb-email"></div></div>
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="doLogout()" title="Abmelden">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </nav>
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="main">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="btn btn-ghost btn-icon btn-sm" onclick="toggleSidebar()">☰</button>
+          <span class="topbar-title" id="topbar-title">Dienstplan</span>
+        </div>
+        <div class="topbar-right">
+          <button id="viol-topbar-btn" class="btn btn-sm hidden" style="background:var(--amber-bg);color:#92400e;border:1px solid #fde68a" onclick="navigate('violations')">
+            ⚠️ <span id="viol-topbar-count">0</span> Hinweise
+          </button>
+          <!-- 🚨 DIENSTAUSFALL SIGNAL BUTTON -->
+          <button class="signal-btn" onclick="openSignalModal()" title="Alle Mitarbeiter per SMS bei Dienstausfall kontaktieren">
+            <span class="signal-dot"></span>
+            🚨 Dienstausfall — SMS Alert
+          </button>
+          <div class="user-av" id="topbar-av" style="width:28px;height:28px;font-size:10px">M</div>
+        </div>
+      </div>
+      <div class="content">
+
+        <!-- DIENSTPLAN -->
+        <div id="view-schedule" class="view active">
+          <div class="ph">
+            <div><h1>Dienstplan</h1><p id="sched-subtitle"></p></div>
+            <div class="ph-actions">
+              <div style="display:flex;align-items:center;gap:4px">
+                <button class="btn btn-ghost btn-sm" onclick="changeWeek(-1)">‹</button>
+                <span id="week-label-top" style="font-size:13px;font-weight:600;min-width:70px;text-align:center"></span>
+                <button class="btn btn-ghost btn-sm" onclick="changeWeek(1)">›</button>
+                <button class="btn btn-ghost btn-sm" onclick="goToday()">Heute</button>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="openShiftModal()">+ Dienst</button>
+            </div>
+          </div>
+          <div class="stats-grid" id="sched-stats"></div>
+          <div class="sched-wrap"><div class="sched-scroll">
+            <table class="sched-table"><thead id="sched-thead"></thead><tbody id="sched-tbody"></tbody></table>
+          </div></div>
+        </div>
+
+        <!-- KI-ASSISTENT -->
+        <div id="view-ai" class="view">
+          <div class="ph">
+            <div><h1>KI-Assistent</h1><p>Automatische Planung & Einspringer-Suche</p></div>
+            <div class="ph-actions"><span style="display:flex;align-items:center;font-size:12px;color:var(--green)"><span class="pulse"></span>Bereit</span></div>
+          </div>
+          <div class="ai-layout">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="card">
+                <div class="card-title">Planungsparameter</div>
+                <div class="field"><label>Von</label><input type="date" id="ai-from"></div>
+                <div class="field"><label>Bis</label><input type="date" id="ai-to"></div>
+                <div class="field"><label>Optimierungsziel</label>
+                  <select id="ai-goal">
+                    <option value="balanced">Ausgeglichene Verteilung</option>
+                    <option value="satisfaction">Mitarbeiterzufriedenheit</option>
+                    <option value="coverage">Maximale Abdeckung</option>
+                    <option value="cost">Kostenoptimierung</option>
+                  </select>
+                </div>
+                <div class="field"><label>Berücksichtigen</label>
+                  <div class="check-group" style="flex-direction:column;gap:5px">
+                    <label class="check-item"><input type="checkbox" checked> ArbZG einhalten</label>
+                    <label class="check-item"><input type="checkbox" checked> Wunschfrei</label>
+                    <label class="check-item"><input type="checkbox" checked> Qualifikationen</label>
+                    <label class="check-item"><input type="checkbox" checked> Ermüdungsmodell</label>
+                    <label class="check-item"><input type="checkbox"> Aus Vergangenheit lernen</label>
+                  </div>
+                </div>
+                <button class="btn btn-ai btn-full" onclick="runAI()">▶ KI-Plan erstellen</button>
+              </div>
+              <div class="card">
+                <div class="card-title">Einspringer-Suche</div>
+                <div class="field"><label>Datum</label><input type="date" id="sub-date"></div>
+                <div class="field"><label>Qualifikation</label>
+                  <select id="sub-qual">
+                    <option value="">Alle</option>
+                    <option>Pflegefachkraft</option><option>Pflegehilfskraft</option>
+                    <option>Wundversorgung</option><option>Palliativpflege</option>
+                    <option>Beatmungspflege</option><option>Demenzbetreuung</option>
+                  </select>
+                </div>
+                <button class="btn btn-ghost btn-full" onclick="findSub()">🔍 Einspringer finden</button>
+                <div id="sub-results" style="margin-top:10px"></div>
+              </div>
+            </div>
+            <div>
+              <div class="card" style="margin-bottom:12px">
+                <div class="card-title">KI-Kommunikation</div>
+                <div class="ai-chat" id="ai-chat"></div>
+              </div>
+              <div id="ai-result-panel" class="hidden"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VERSTÖSSE -->
+        <div id="view-violations" class="view">
+          <div class="ph"><div><h1>Verstöße & Warnungen</h1><p>Echtzeit-Überwachung ArbZG</p></div></div>
+          <div class="v-summary">
+            <div class="v-sum-card" style="background:var(--red-bg)"><div class="v-sum-num" style="color:var(--red)" id="vcrit">0</div><div style="font-size:12px;color:var(--red)">Kritisch</div></div>
+            <div class="v-sum-card" style="background:var(--amber-bg)"><div class="v-sum-num" style="color:var(--amber)" id="vwarn">0</div><div style="font-size:12px;color:var(--amber)">Warnung</div></div>
+            <div class="v-sum-card" style="background:#eff6ff"><div class="v-sum-num" style="color:var(--blue-dark)" id="vinfo">0</div><div style="font-size:12px;color:var(--blue-dark)">Info</div></div>
+          </div>
+          <div class="filter-bar">
+            <button class="btn btn-primary btn-sm" onclick="filterViols('')">Alle</button>
+            <button class="btn btn-ghost btn-sm" onclick="filterViols('critical')">Kritisch</button>
+            <button class="btn btn-ghost btn-sm" onclick="filterViols('warning')">Warnung</button>
+          </div>
+          <div class="v-list" id="v-list"></div>
+        </div>
+
+        <!-- MITARBEITER -->
+        <div id="view-employees" class="view">
+          <div class="ph">
+            <div><h1>Mitarbeiter</h1><p id="emp-count-label"></p></div>
+            <div class="ph-actions">
+              <div class="search-box">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input placeholder="Suchen…" id="emp-search" oninput="renderEmployees()">
+              </div>
+              <button class="btn btn-primary btn-sm" id="add-emp-btn" onclick="openEmpModal()">+ Mitarbeiter</button>
+            </div>
+          </div>
+          <div class="emp-grid" id="emp-grid"></div>
+        </div>
+
+        <!-- ABWESENHEITEN -->
+        <div id="view-absences" class="view">
+          <div class="ph"><div><h1>Abwesenheiten</h1><p>Urlaub, Krankheit, Sonderurlaub</p></div>
+            <div class="ph-actions"><button class="btn btn-primary btn-sm" onclick="openAbsModal()">+ Abwesenheit</button></div>
+          </div>
+          <div class="abs-list" id="abs-list"></div>
+        </div>
+
+        <!-- ARBEITSZEITKONTO -->
+        <div id="view-workhours" class="view">
+          <div class="ph"><div><h1>Arbeitszeitkonto</h1><p>Soll/Ist-Vergleich & Überstunden</p></div>
+            <div class="ph-actions"><select id="wh-emp-sel" onchange="renderWorkhours()" style="border:1px solid var(--border);border-radius:var(--rad-sm);padding:6px 10px;font-size:13px"></select></div>
+          </div>
+          <div id="wh-content"></div>
+        </div>
+
+        <!-- EINSTELLUNGEN -->
+        <div id="view-settings" class="view">
+          <div class="ph"><div><h1>Einstellungen</h1><p>Einrichtung, Schichten, Benutzer, Datenschutz</p></div></div>
+          <div class="settings-layout">
+            <div class="settings-nav">
+              <button class="settings-nav-btn active" onclick="showSettingsTab('facility',this)">Einrichtung</button>
+              <button class="settings-nav-btn" onclick="showSettingsTab('shifts',this)">Schichtmodelle</button>
+              <button class="settings-nav-btn" onclick="showSettingsTab('users',this)">Benutzer</button>
+              <button class="settings-nav-btn" onclick="showSettingsTab('dsgvo',this)">Datenschutz</button>
+            </div>
+            <div id="settings-content"></div>
+          </div>
+        </div>
+
+        <!-- AUDIT -->
+        <div id="view-audit" class="view">
+          <div class="ph"><div><h1>Audit-Log</h1><p>DSGVO-konforme Protokollierung</p></div>
+            <div class="ph-actions"><button class="btn btn-ghost btn-sm" onclick="toast('Export gestartet','info')">⬇ Export</button></div>
+          </div>
+          <div id="audit-list"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SHIFT MODAL -->
+<div class="modal-overlay hidden" id="shift-modal" onclick="if(event.target===this)closeModal('shift-modal')">
+  <div class="modal">
+    <div class="modal-hdr"><h3 id="shift-modal-title">Dienst hinzufügen</h3><button class="btn btn-ghost btn-icon btn-sm" onclick="closeModal('shift-modal')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="sf-edit-id">
+      <div class="field-row">
+        <div class="field"><label>Mitarbeiter *</label><select id="sf-emp" onchange="checkShiftViolation()"></select></div>
+        <div class="field"><label>Datum *</label><input type="date" id="sf-date" onchange="checkShiftViolation()"></div>
+      </div>
+      <div class="field"><label>Schichttyp</label>
+        <select id="sf-type" onchange="checkShiftViolation()">
+          <option value="early">Frühdienst (06:00–14:00)</option>
+          <option value="late">Spätdienst (14:00–22:00)</option>
+          <option value="night">Nachtdienst (22:00–06:00)</option>
+          <option value="standby">Bereitschaft</option>
+        </select>
+      </div>
+      <div id="sf-viol-preview" class="violation-preview hidden"></div>
+      <div class="field"><label>Notiz</label><input type="text" id="sf-note" placeholder="Optional"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('shift-modal')">Abbrechen</button>
+      <button class="btn btn-primary" onclick="saveShift()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- EMPLOYEE MODAL -->
+<div class="modal-overlay hidden" id="emp-modal" onclick="if(event.target===this)closeModal('emp-modal')">
+  <div class="modal modal-lg">
+    <div class="modal-hdr"><h3 id="emp-modal-title">Mitarbeiter anlegen</h3><button class="btn btn-ghost btn-icon btn-sm" onclick="closeModal('emp-modal')">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="ef-edit-id">
+      <div class="form-tabs">
+        <button class="form-tab active" onclick="showEmpTab('base',this)">Stammdaten</button>
+        <button class="form-tab" onclick="showEmpTab('work',this)">Arbeitszeit</button>
+        <button class="form-tab" onclick="showEmpTab('qualif',this)">Qualifikationen</button>
+      </div>
+      <div id="emp-tab-base" class="tab-pane active">
+        <div class="field-row"><div class="field"><label>Vorname *</label><input type="text" id="ef-first"></div><div class="field"><label>Nachname *</label><input type="text" id="ef-last"></div></div>
+        <div class="field-row"><div class="field"><label>E-Mail *</label><input type="email" id="ef-email"></div><div class="field"><label>Telefon</label><input type="tel" id="ef-phone"></div></div>
+        <div class="field-row">
+          <div class="field"><label>Rolle</label><select id="ef-role"><option value="employee">Mitarbeiter</option><option value="team_lead">Teamleitung</option><option value="manager">Leitung</option></select></div>
+          <div class="field"><label>Beschäftigung</label><select id="ef-employment"><option value="fulltime">Vollzeit</option><option value="parttime">Teilzeit</option><option value="minijob">Minijob</option></select></div>
+        </div>
+        <div class="field-row"><div class="field"><label>Soll-Stunden/Woche</label><input type="number" id="ef-weekly" value="40" min="0" max="48"></div><div class="field"><label>Urlaubstage/Jahr</label><input type="number" id="ef-vacation" value="30"></div></div>
+      </div>
+      <div id="emp-tab-work" class="tab-pane">
+        <div class="field"><label>Bevorzugte Schichten</label>
+          <div class="check-group"><label class="check-item"><input type="checkbox" name="pref" value="early"> Früh</label><label class="check-item"><input type="checkbox" name="pref" value="late"> Spät</label><label class="check-item"><input type="checkbox" name="pref" value="night"> Nacht</label></div>
+        </div>
+        <div class="field"><label>Nicht verfügbar an</label>
+          <div class="check-group">
+            <label class="check-item"><input type="checkbox" name="unavail" value="0"> So</label>
+            <label class="check-item"><input type="checkbox" name="unavail" value="1"> Mo</label>
+            <label class="check-item"><input type="checkbox" name="unavail" value="2"> Di</label>
+            <label class="check-item"><input type="checkbox" name="unavail" value="3"> Mi</label>
+            <label class="check-item"><input type="checkbox" name="unavail" value="4"> Do</label>
+            <label class="check-item"><input type="checkbox" name="unavail" value="5"> Fr</label>
+            <label class="check-item"><input type="checkbox" name="unavail" value="6"> Sa</label>
+          </div>
+        </div>
+      </div>
+      <div id="emp-tab-qualif" class="tab-pane"><div class="qualif-list" id="qualif-list"></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('emp-modal')">Abbrechen</button><button class="btn btn-primary" onclick="saveEmployee()">Speichern</button></div>
+  </div>
+</div>
+
+<!-- ABSENCE MODAL -->
+<div class="modal-overlay hidden" id="abs-modal" onclick="if(event.target===this)closeModal('abs-modal')">
+  <div class="modal">
+    <div class="modal-hdr"><h3>Abwesenheit eintragen</h3><button class="btn btn-ghost btn-icon btn-sm" onclick="closeModal('abs-modal')">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Mitarbeiter *</label><select id="abf-emp"></select></div>
+      <div class="field"><label>Art der Abwesenheit</label><div class="absence-type-grid" id="abs-type-grid"></div></div>
+      <div class="field-row"><div class="field"><label>Von *</label><input type="date" id="abf-from"></div><div class="field"><label>Bis *</label><input type="date" id="abf-to"></div></div>
+      <div class="field"><label>Bemerkung</label><input type="text" id="abf-note" placeholder="Optional"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('abs-modal')">Abbrechen</button><button class="btn btn-primary" onclick="saveAbsence()">Speichern</button></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ═══════════════════════════════════════
+     🚨 DIENSTAUSFALL — SMS ALERT MODAL
+═══════════════════════════════════════ -->
+<div id="signal-modal" class="smo-overlay hidden" onclick="if(event.target===this&&signalStep==='config')closeSignalModal()">
+  <div class="smo-box">
+    <div class="smo-head">
+      <span class="smo-head-icon">🚨</span>
+      <div>
+        <h2>Dienstausfall — SMS Alert</h2>
+        <p>Alle Mitarbeiter sofort per SMS kontaktieren</p>
+      </div>
+      <button class="smo-close" onclick="closeSignalModal()" id="smo-close-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="smo-step-config" class="smo-body">
+      <div class="smo-section">
+        <span class="smo-label">1. Welche Schicht fällt aus?</span>
+        <div class="smo-shift-grid" id="smo-shift-grid"></div>
+        <div class="field" style="margin-top:8px"><label>Datum des Ausfalls</label><input type="date" id="smo-date"></div>
+      </div>
+      <div class="smo-section">
+        <span class="smo-label">2. Ausfallgrund</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px" id="smo-reason-chips">
+          <button class="btn btn-ghost btn-sm smo-reason active" onclick="setReason('Krankheit',this)" style="border-color:#dc2626;color:#dc2626">🤒 Krankheit</button>
+          <button class="btn btn-ghost btn-sm smo-reason" onclick="setReason('Notfall',this)">⚡ Notfall</button>
+          <button class="btn btn-ghost btn-sm smo-reason" onclick="setReason('Unfall',this)">🏥 Unfall</button>
+          <button class="btn btn-ghost btn-sm smo-reason" onclick="setReason('Familiennotfall',this)">👨‍👩‍👧 Familiennotfall</button>
+          <button class="btn btn-ghost btn-sm smo-reason" onclick="setReason('Sonstiges',this)">• Sonstiges</button>
+        </div>
+      </div>
+      <div class="smo-section">
+        <span class="smo-label">3. SMS-Nachricht</span>
+        <div class="sms-label">Vorschau auf Mitarbeiter-Handy</div>
+        <div class="sms-preview" id="smo-sms-preview">Wird generiert…</div>
+        <textarea class="smo-msg-box" id="smo-custom-msg" rows="4" oninput="onMsgInput()" placeholder="Nachricht anpassen…"></textarea>
+        <div class="smo-char-count"><span id="smo-char-count">0</span>/160 Zeichen (1 SMS)</div>
+      </div>
+      <div class="smo-section">
+        <span class="smo-label">4. Empfänger</span>
+        <div class="smo-sel-bar">
+          <span class="smo-sel-count" id="smo-sel-count">0 ausgewählt</span>
+          <button class="smo-sel-all" onclick="toggleAllEmps()">Alle / Keine</button>
+        </div>
+        <div class="smo-emp-list" id="smo-emp-list"></div>
+      </div>
+    </div>
+    <div id="smo-step-sending" class="hidden">
+      <div class="smo-sending">
+        <div style="font-size:40px;margin-bottom:8px" id="smo-send-icon">📡</div>
+        <h3 id="smo-send-title">SMS werden versendet…</h3>
+        <p id="smo-send-sub">Bitte warten — kontaktiere Mitarbeiter</p>
+        <div class="smo-progress"><div class="smo-progress-bar" id="smo-progress-bar"></div></div>
+        <div class="smo-results" id="smo-results"></div>
+        <div id="smo-summary" class="hidden"></div>
+      </div>
+    </div>
+    <div class="smo-foot" id="smo-foot">
+      <div class="smo-preview-count">
+        <strong id="smo-foot-count">0</strong> Mitarbeiter werden per SMS kontaktiert
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="closeSignalModal()">Abbrechen</button>
+        <button class="btn-signal-send" id="smo-send-btn" onclick="startSending()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          SMS jetzt senden
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ST={early:{label:'Früh',start:'06:00',end:'14:00',color:'#2563eb',bg:'#dbeafe',h:8},late:{label:'Spät',start:'14:00',end:'22:00',color:'#7c3aed',bg:'#ede9fe',h:8},night:{label:'Nacht',start:'22:00',end:'06:00',color:'#1e40af',bg:'#bfdbfe',h:8},standby:{label:'Bereit',start:'00:00',end:'00:00',color:'#d97706',bg:'#fef3c7',h:0}};
+const AT={vacation:{label:'Urlaub',icon:'🏖️',color:'#10b981'},sick:{label:'Krank',icon:'🤒',color:'#ef4444'},child_sick:{label:'Kind krank',icon:'👶',color:'#f97316'},special:{label:'Sonderurlaub',icon:'⭐',color:'#8b5cf6'},wish_free:{label:'Wunschfrei',icon:'💚',color:'#06b6d4'},training:{label:'Fortbildung',icon:'📚',color:'#6366f1'}};
+const QUALS=['Pflegefachkraft','Pflegehilfskraft','Wundversorgung','Palliativpflege','Beatmungspflege','Demenzbetreuung','Ersthelfer','Hygienebeauftragter'];
+const RL={employee:'Mitarbeiter',team_lead:'Teamleitung',manager:'Leitung',admin:'Administrator'};
+const EC=['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444','#06b6d4','#6366f1','#ec4899','#14b8a6','#f43f5e'];
+let EMPS=[
+  {id:'e1',firstname:'Anna',lastname:'Müller',role:'manager',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Palliativpflege','Ersthelfer'],shiftPrefs:['early','late'],unavailDays:[],vacationDays:30,email:'anna.mueller@pflege.de'},
+  {id:'e2',firstname:'Thomas',lastname:'Schmidt',role:'team_lead',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Wundversorgung'],shiftPrefs:['late','night'],unavailDays:[0],vacationDays:30,email:'t.schmidt@pflege.de'},
+  {id:'e3',firstname:'Sarah',lastname:'Weber',role:'employee',employment:'parttime',weeklyHours:25,qualifications:['Pflegehilfskraft','Ersthelfer'],shiftPrefs:['early'],unavailDays:[6,0],vacationDays:20,email:'s.weber@pflege.de'},
+  {id:'e4',firstname:'Michael',lastname:'Bauer',role:'employee',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Beatmungspflege','Demenzbetreuung'],shiftPrefs:['night','early'],unavailDays:[],vacationDays:30,email:'m.bauer@pflege.de'},
+  {id:'e5',firstname:'Lisa',lastname:'Hoffmann',role:'employee',employment:'parttime',weeklyHours:30,qualifications:['Pflegefachkraft','Hygienebeauftragter'],shiftPrefs:['early','late'],unavailDays:[1],vacationDays:25,email:'l.hoffmann@pflege.de'},
+  {id:'e6',firstname:'Klaus',lastname:'Fischer',role:'employee',employment:'fulltime',weeklyHours:40,qualifications:['Pflegehilfskraft','Demenzbetreuung'],shiftPrefs:['late','night'],unavailDays:[],vacationDays:30,email:'k.fischer@pflege.de'},
+  {id:'e7',firstname:'Marie',lastname:'Schneider',role:'employee',employment:'minijob',weeklyHours:15,qualifications:['Pflegehilfskraft'],shiftPrefs:['early'],unavailDays:[1,2,3],vacationDays:15,email:'m.schneider@pflege.de'},
+];
+const USERS=[{id:'u1',empId:'e1',email:'anna.mueller@pflege.de',pw:'demo123',role:'manager'},{id:'u2',empId:'e2',email:'t.schmidt@pflege.de',pw:'demo123',role:'team_lead'},{id:'u3',empId:'e3',email:'s.weber@pflege.de',pw:'demo123',role:'employee'},{id:'adm',empId:null,email:'admin@pflege.de',pw:'admin123',role:'admin'}];
+let SHIFTS=[],ABSENCES=[{id:'a1',empId:'e3',type:'vacation',from:'2025-06-27',to:'2025-07-04',note:'Sommerurlaub'},{id:'a2',empId:'e7',type:'sick',from:'2025-06-26',to:'2025-06-26',note:''}];
+let AUDIT=[{id:1,time:'2025-06-26 09:12',action:'Dienstplan KW26 gespeichert',user:'Anna Müller'},{id:2,time:'2025-06-25 14:33',action:'Mitarbeiter aktualisiert',user:'Anna Müller'},{id:3,time:'2025-06-25 08:00',action:'Login',user:'Thomas Schmidt'}];
+let CU=null,weekStart=wkStart(new Date()),absType='vacation',aiRes=null,vfilt='';
+function ds(d){return(d instanceof Date?d:new Date(d)).toISOString().split('T')[0]}
+function wkStart(d){const n=new Date(d);const day=n.getDay();n.setDate(n.getDate()-day+(day===0?-6:1));n.setHours(0,0,0,0);return n}
+function wkDays(ws){return Array.from({length:7},(_,i)=>{const d=new Date(ws);d.setDate(d.getDate()+i);return d})}
+function isoWk(d){const dt=new Date(d);dt.setHours(0,0,0,0);dt.setDate(dt.getDate()+4-(dt.getDay()||7));const y=new Date(dt.getFullYear(),0,1);return Math.ceil(((dt-y)/864e5+1)/7)}
+function fmt(d){return new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})}
+function fmtL(d){return new Date(d).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})}
+function eName(e){return e?`${e.firstname} ${e.lastname}`:'–'}
+function eInit(e){return e?`${e.firstname[0]}${e.lastname[0]}`:'?'}
+function eCol(e){return e?EC[EMPS.indexOf(e)%EC.length]:'#94a3b8'}
+function eById(id){return EMPS.find(e=>e.id===id)}
+function tod(){return ds(new Date())}
+function $$(s){return document.querySelectorAll(s)}
+function $(i){return document.getElementById(i)}
+function show(i){$(i)&&$(i).classList.remove('hidden')}
+function hide(i){$(i)&&$(i).classList.add('hidden')}
+
+function genShifts(){
+  const ws=wkStart(new Date());
+  const p=[{e:'e1',d:0,t:'early'},{e:'e2',d:0,t:'late'},{e:'e4',d:0,t:'night'},{e:'e3',d:1,t:'early'},{e:'e5',d:1,t:'early'},{e:'e2',d:1,t:'late'},{e:'e6',d:1,t:'night'},{e:'e1',d:2,t:'early'},{e:'e4',d:2,t:'early'},{e:'e5',d:2,t:'late'},{e:'e6',d:2,t:'night'},{e:'e3',d:3,t:'early'},{e:'e2',d:3,t:'late'},{e:'e4',d:3,t:'night'},{e:'e1',d:4,t:'early'},{e:'e5',d:4,t:'late'},{e:'e6',d:4,t:'late'},{e:'e4',d:4,t:'night'},{e:'e7',d:5,t:'early'},{e:'e3',d:5,t:'late'},{e:'e2',d:5,t:'night'},{e:'e6',d:6,t:'early'},{e:'e4',d:6,t:'late'}];
+  let i=0;SHIFTS=p.map(x=>{const d=new Date(ws);d.setDate(d.getDate()+x.d);return{id:`s${++i}`,empId:x.e,date:ds(d),type:x.t,note:'',ai:false}});
+}
+
+function chkViols(shifts,emps){
+  const v=[];const bE={};
+  shifts.forEach(s=>{(bE[s.empId]=bE[s.empId]||[]).push(s)});
+  for(const[eid,es] of Object.entries(bE)){
+    const e=emps.find(x=>x.id===eid);if(!e)continue;
+    const so=[...es].sort((a,b)=>a.date.localeCompare(b.date));
+    const bW={};so.forEach(s=>{const wk=ds(wkStart(new Date(s.date)));bW[wk]=(bW[wk]||0)+(ST[s.type]?.h||0)});
+    for(const[wk,h] of Object.entries(bW)){
+      if(h>48)v.push({id:`vwh_${eid}_${wk}`,severity:'critical',type:'arbzg',msg:`${eName(e)}: ${h}h/Woche > ArbZG-Maximum (48h)`,e});
+      else if(h>e.weeklyHours+8)v.push({id:`vot_${eid}_${wk}`,severity:'warning',type:'ot',msg:`${eName(e)}: ${h}h/Woche (Soll: ${e.weeklyHours}h) – erhebliche Überstunden`,e});
+    }
+    for(let i=1;i<so.length;i++){
+      const pv=so[i-1],cr=so[i];
+      const pe=new Date(`${pv.date}T${ST[pv.type]?.end||'00:00'}:00`);
+      if(pv.type==='night')pe.setDate(pe.getDate()+1);
+      const cs=new Date(`${cr.date}T${ST[cr.type]?.start||'00:00'}:00`);
+      const rh=(cs-pe)/36e5;
+      if(rh>=0&&rh<11)v.push({id:`vr_${eid}_${i}`,severity:'critical',type:'rest',msg:`${eName(e)}: Nur ${rh.toFixed(1)}h Ruhezeit (${pv.date}→${cr.date}). ArbZG §5: mind. 11h`,e});
+    }
+    const suns=so.filter(s=>new Date(s.date).getDay()===0);
+    if(suns.length>2)v.push({id:`vs_${eid}`,severity:'warning',type:'arbzg',msg:`${eName(e)}: ${suns.length} Sonntagsdienste – ArbZG §11 beachten`,e});
+  }
+  return v;
+}
+function getViols(){return chkViols(SHIFTS,EMPS)}
+
+function doLogin(){
+  const email=$('login-email').value.trim(),pw=$('login-pw').value;
+  const u=USERS.find(x=>x.email===email&&x.pw===pw);
+  if(!u){show('login-error');$('login-error').textContent='E-Mail oder Passwort ungültig.';return}
+  hide('login-error');CU=u;genShifts();
+  $('login-screen').classList.add('hidden');show('app-screen');
+  const e=eById(u.empId);const av=eInit(e)||'A';const col=eCol(e)||'#2563eb';
+  $('sb-av').textContent=av;$('sb-av').style.background=`linear-gradient(135deg,${col},#1e40af)`;
+  $('sb-name').textContent=e?eName(e):'Administrator';$('sb-email').textContent=u.email;
+  $('sb-role').textContent=RL[u.role]||u.role;
+  $('mob-av').textContent=av;$('mob-av').style.background=col;
+  $('topbar-av').textContent=av;$('topbar-av').style.background=col;
+  if(u.role==='admin')show('admin-nav');else hide('admin-nav');
+  if(u.role==='employee')$('add-emp-btn').style.display='none';
+  const ws=wkStart(new Date());const we=new Date(ws);we.setDate(we.getDate()+6);
+  $('ai-from').value=ds(ws);$('ai-to').value=ds(we);$('sub-date').value=tod();
+  initAIChat();navigate('schedule');
+}
+function doLogout(){CU=null;hide('app-screen');$('login-screen').classList.remove('hidden')}
+function toggleSidebar(){const sb=$('sidebar');sb.classList.toggle('open');$('sidebar-overlay').style.display=sb.classList.contains('open')?'block':'none'}
+
+const VT={'schedule':'Dienstplan','ai':'KI-Assistent','violations':'Verstöße','employees':'Mitarbeiter','absences':'Abwesenheiten','workhours':'Arbeitszeitkonto','settings':'Einstellungen','audit':'Audit-Log'};
+function navigate(v){
+  $$('.view').forEach(el=>el.classList.remove('active'));
+  $$('.nav-item').forEach(el=>el.classList.remove('active'));
+  $(`view-${v}`)?.classList.add('active');
+  $$('.nav-item').forEach(b=>{if(b.getAttribute('onclick')?.includes(`'${v}'`))b.classList.add('active')});
+  $('topbar-title').textContent=VT[v]||v;
+  if(window.innerWidth<900){$('sidebar')?.classList.remove('open');$('sidebar-overlay').style.display='none'}
+  if(v==='schedule')renderSched();
+  if(v==='violations')renderViols();
+  if(v==='employees')renderEmps();
+  if(v==='absences')renderAbs();
+  if(v==='workhours')renderWH();
+  if(v==='settings')renderSettings('facility');
+  if(v==='audit')renderAudit();
+  updViolBadge();
+}
+
+function updViolBadge(){
+  const vs=getViols();const b=$('viol-badge');const tb=$('viol-topbar-btn');
+  if(vs.length>0){b.textContent=vs.length;b.style.display='';$('viol-topbar-count').textContent=vs.length;tb.classList.remove('hidden')}
+  else{b.style.display='none';tb.classList.add('hidden')}
+}
+
+function changeWeek(n){weekStart.setDate(weekStart.getDate()+n*7);renderSched()}
+function goToday(){weekStart=wkStart(new Date());renderSched()}
+
+function renderSched(){
+  const days=wkDays(weekStart);const kw=isoWk(weekStart);const td=tod();
+  $('sched-subtitle').textContent=`KW ${kw} · ${fmt(days[0])} – ${fmt(days[6])}`;
+  $('week-label-top').textContent=`KW ${kw}`;
+  const ws=SHIFTS.filter(s=>days.some(d=>ds(d)===s.date));
+  const vs=getViols();const wa=ABSENCES.filter(a=>days.some(d=>ds(d)>=a.from&&ds(d)<=a.to));
+  $('sched-stats').innerHTML=`
+    <div class="stat-card blue"><div class="stat-val">${ws.length}</div><div class="stat-lbl">Dienste</div></div>
+    <div class="stat-card red"><div class="stat-val">${vs.filter(v=>v.severity==='critical').length}</div><div class="stat-lbl">Krit. Verstöße</div></div>
+    <div class="stat-card amber"><div class="stat-val">${wa.length}</div><div class="stat-lbl">Abwesenheiten</div></div>
+    <div class="stat-card green"><div class="stat-val">${EMPS.length}</div><div class="stat-lbl">Mitarbeiter</div></div>`;
+  let th='<tr><th>Mitarbeiter</th>';
+  days.forEach(d=>{const x=ds(d);th+=`<th class="${x===td?'th-today':''}"><span class="th-dow">${d.toLocaleDateString('de-DE',{weekday:'short'})}</span><span class="th-date">${fmt(d)}</span></th>`});
+  th+='</tr>';$('sched-thead').innerHTML=th;
+  let tb='';
+  EMPS.forEach(emp=>{
+    const col=eCol(emp);
+    tb+=`<tr class="sched-row"><td class="row-emp"><div style="display:flex;align-items:center;gap:6px"><div style="width:24px;height:24px;border-radius:50%;background:${col};color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${eInit(emp)}</div><div class="emp-row-name">${emp.firstname}<br>${emp.lastname}</div></div></td>`;
+    days.forEach(d=>{
+      const x=ds(d);
+      const dS=SHIFTS.filter(s=>s.empId===emp.id&&s.date===x);
+      const ab=ABSENCES.find(a=>a.empId===emp.id&&a.from<=x&&a.to>=x);
+      tb+=`<td class="shift-cell" style="${x===td?'background:#fafbff':''}">`;
+      if(ab){const a=AT[ab.type];tb+=`<div class="absence-chip">${a?.icon} ${a?.label}</div>`}
+      else{
+        dS.forEach(s=>{const st=ST[s.type];tb+=`<div class="shift-chip" style="background:${st.bg};color:${st.color}"><span class="chip-lbl">${st.label}</span><span class="chip-time">${st.start}–${st.end}</span><button class="chip-del" onclick="delShift('${s.id}')" style="color:${st.color}">✕</button>${s.ai?`<span style="font-size:8px;position:absolute;bottom:2px;right:3px;opacity:.5;color:${st.color}">KI</span>`:''}</div>`});
+        if(!ab&&(CU?.role!=='employee'||CU?.empId===emp.id))tb+=`<button class="add-btn" onclick="openShiftModal('${emp.id}','${x}')">+</button>`;
+      }
+      tb+='</td>';
+    });
+    tb+='</tr>';
+  });
+  $('sched-tbody').innerHTML=tb;
+}
+
+function openShiftModal(empId='',date=''){
+  $('shift-modal-title').textContent='Dienst hinzufügen';$('sf-edit-id').value='';
+  $('sf-emp').innerHTML=EMPS.map(e=>`<option value="${e.id}"${e.id===empId?' selected':''}>${eName(e)}</option>`).join('');
+  $('sf-date').value=date||tod();$('sf-type').value='early';$('sf-note').value='';
+  hide('sf-viol-preview');show('shift-modal');
+}
+function checkShiftViolation(){
+  const eid=$('sf-emp').value,date=$('sf-date').value,type=$('sf-type').value;
+  if(!eid||!date)return;
+  const vs=chkViols([...SHIFTS,{id:'_t',empId:eid,date,type}],EMPS).filter(v=>v.e?.id===eid);
+  if(vs.length>0){$('sf-viol-preview').textContent='⚠️ '+vs[0].msg;show('sf-viol-preview')}else hide('sf-viol-preview');
+}
+function saveShift(){
+  const eid=$('sf-emp').value,date=$('sf-date').value,type=$('sf-type').value,note=$('sf-note').value;
+  if(!eid||!date){toast('Bitte Mitarbeiter und Datum auswählen','error');return}
+  const eid2=$('sf-edit-id').value;
+  if(eid2)SHIFTS=SHIFTS.map(s=>s.id===eid2?{...s,empId:eid,date,type,note}:s);
+  else SHIFTS.push({id:'s'+Date.now(),empId:eid,date,type,note,ai:false});
+  closeModal('shift-modal');renderSched();updViolBadge();
+  addAudit(`Dienst ${eid2?'bearbeitet':'erstellt'}: ${eName(eById(eid))} am ${date}`);
+  toast(eid2?'Dienst aktualisiert':'Dienst hinzugefügt');
+}
+function delShift(id){SHIFTS=SHIFTS.filter(s=>s.id!==id);renderSched();updViolBadge();addAudit('Dienst gelöscht');toast('Dienst gelöscht','info')}
+
+function renderViols(){
+  const vs=getViols();const cr=vs.filter(v=>v.severity==='critical').length;const wa=vs.filter(v=>v.severity==='warning').length;
+  $('vcrit').textContent=cr;$('vwarn').textContent=wa;$('vinfo').textContent=vs.length-cr-wa;
+  const f=vfilt?vs.filter(v=>v.severity===vfilt):vs;
+  $('v-list').innerHTML=f.length===0?'<div class="empty-state"><div style="font-size:40px;margin-bottom:8px">✅</div><h3>Keine Verstöße</h3><p>Alle Dienste entsprechen den gesetzlichen Vorgaben.</p></div>':
+    f.map(v=>`<div class="v-item v-${v.severity}"><span style="font-size:16px">${v.severity==='critical'?'🔴':'🟡'}</span><div style="flex:1"><div class="v-msg">${v.msg}</div><div class="v-sub">${v.type==='rest'?'§5 ArbZG – Ruhezeit':v.type==='arbzg'?'§ ArbZG Verstoß':'Hinweis'}</div></div><span class="badge badge-${v.severity==='critical'?'red':'amber'}">${v.severity==='critical'?'Kritisch':'Warnung'}</span></div>`).join('');
+}
+function filterViols(f){
+  vfilt=f;$$('.filter-bar .btn').forEach(b=>{b.classList.remove('btn-primary');b.classList.add('btn-ghost')});
+  event.target.classList.add('btn-primary');event.target.classList.remove('btn-ghost');renderViols();
+}
+
+function renderEmps(){
+  const q=($('emp-search').value||'').toLowerCase();
+  const fl=EMPS.filter(e=>eName(e).toLowerCase().includes(q)||e.qualifications.some(x=>x.toLowerCase().includes(q)));
+  $('emp-count-label').textContent=`${EMPS.length} Mitarbeiter`;
+  const now=new Date();
+  $('emp-grid').innerHTML=fl.map(emp=>{
+    const col=eCol(emp);
+    const ms=SHIFTS.filter(s=>s.empId===emp.id&&new Date(s.date).getMonth()===now.getMonth());
+    const act=ms.reduce((s,x)=>s+(ST[x.type]?.h||0),0);const tgt=Math.round(emp.weeklyHours/5*21);
+    const pct=Math.min(100,Math.round(act/tgt*100))||0;const bc=act>tgt+10?col:act<tgt-10?'var(--red)':'var(--green)';
+    return `<div class="emp-card"><div class="emp-card-hdr"><div class="emp-big-av" style="background:${col}">${eInit(emp)}</div><div><div class="emp-fullname">${eName(emp)}</div><div class="emp-title">${RL[emp.role]} · ${emp.weeklyHours}h/W</div></div></div>
+      <div class="emp-tags">${emp.qualifications.slice(0,3).map(q=>`<span class="tag tag-blue">${q}</span>`).join('')}${emp.qualifications.length>3?`<span class="tag">+${emp.qualifications.length-3}</span>`:''}</div>
+      <div style="margin-top:8px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px"><span>Stunden (Monat)</span><span class="mono">${act}h/${tgt}h</span></div><div class="wh-bar-wrap"><div class="wh-bar" style="width:${pct}%;background:${bc}"></div></div></div>
+      <div class="emp-card-footer"><span style="font-size:11px;color:var(--muted)">${emp.email}</span>${CU?.role!=='employee'?`<button class="btn btn-ghost btn-sm" onclick="openEmpModal('${emp.id}')">Bearbeiten</button>`:''}</div></div>`;
+  }).join('');
+}
+function openEmpModal(id=''){
+  $('emp-tab-base').classList.add('active');$('emp-tab-work').classList.remove('active');$('emp-tab-qualif').classList.remove('active');
+  $$('.form-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  const emp=id?eById(id):null;$('ef-edit-id').value=id;
+  $('emp-modal-title').textContent=emp?'Mitarbeiter bearbeiten':'Mitarbeiter anlegen';
+  $('ef-first').value=emp?.firstname||'';$('ef-last').value=emp?.lastname||'';$('ef-email').value=emp?.email||'';$('ef-phone').value=emp?.phone||'';
+  $('ef-role').value=emp?.role||'employee';$('ef-employment').value=emp?.employment||'fulltime';$('ef-weekly').value=emp?.weeklyHours||40;$('ef-vacation').value=emp?.vacationDays||30;
+  $$('[name=pref]').forEach(c=>c.checked=emp?.shiftPrefs?.includes(c.value)||false);
+  $$('[name=unavail]').forEach(c=>c.checked=emp?.unavailDays?.includes(+c.value)||false);
+  $('qualif-list').innerHTML=QUALS.map(q=>`<label class="qualif-item"><input type="checkbox" name="qualif" value="${q}"${emp?.qualifications?.includes(q)?' checked':''}> ${q}</label>`).join('');
+  show('emp-modal');
+}
+function saveEmployee(){
+  const id=$('ef-edit-id').value,first=$('ef-first').value.trim(),last=$('ef-last').value.trim(),email=$('ef-email').value.trim();
+  if(!first||!last||!email){toast('Vorname, Nachname und E-Mail erforderlich','error');return}
+  const prefs=[...$$('[name=pref]')].filter(c=>c.checked).map(c=>c.value);
+  const unavail=[...$$('[name=unavail]')].filter(c=>c.checked).map(c=>+c.value);
+  const qualifs=[...$$('[name=qualif]')].filter(c=>c.checked).map(c=>c.value);
+  const data={firstname:first,lastname:last,email,phone:$('ef-phone').value,role:$('ef-role').value,employment:$('ef-employment').value,weeklyHours:+$('ef-weekly').value,vacationDays:+$('ef-vacation').value,shiftPrefs:prefs,unavailDays:unavail,qualifications:qualifs};
+  if(id)EMPS=EMPS.map(e=>e.id===id?{...e,...data}:e);else EMPS.push({id:'e'+Date.now(),...data});
+  closeModal('emp-modal');renderEmps();toast(id?'Mitarbeiter aktualisiert':'Mitarbeiter angelegt');addAudit(`${id?'Mitarbeiter aktualisiert':'Neuer Mitarbeiter'}: ${first} ${last}`);
+}
+function showEmpTab(t,btn){
+  ['base','work','qualif'].forEach(x=>$(`emp-tab-${x}`).classList.toggle('active',x===t));
+  $$('.form-tab').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');
+}
+
+function renderAbs(){
+  $('abs-list').innerHTML=ABSENCES.length===0?'<div class="empty-state"><div style="font-size:40px">📅</div><h3>Keine Abwesenheiten</h3></div>':
+    ABSENCES.map(a=>{const e=eById(a.empId);const at=AT[a.type];return`<div class="abs-item"><span class="abs-icon">${at?.icon}</span><div style="flex:1"><div class="abs-emp">${eName(e)}</div><div class="abs-date">${fmt(a.from)} – ${fmt(a.to)}${a.note?' · '+a.note:''}</div></div><span class="abs-type-badge" style="background:${at?.color}20;color:${at?.color}">${at?.label}</span>${CU?.role!=='employee'?`<button class="btn btn-ghost btn-sm btn-icon" onclick="delAbs('${a.id}')" title="Löschen">🗑</button>`:''}</div>`}).join('');
+}
+function openAbsModal(){
+  absType='vacation';$('abf-emp').innerHTML=EMPS.map(e=>`<option value="${e.id}">${eName(e)}</option>`).join('');
+  $('abf-from').value=tod();$('abf-to').value=tod();$('abf-note').value='';
+  $('abs-type-grid').innerHTML=Object.entries(AT).map(([k,v])=>`<button class="abs-type-btn${k==='vacation'?' active':''}" onclick="selAbsType('${k}',this)">${v.icon} ${v.label}</button>`).join('');
+  show('abs-modal');
+}
+function selAbsType(t,btn){absType=t;$$('.abs-type-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active')}
+function saveAbsence(){
+  const eid=$('abf-emp').value,fr=$('abf-from').value,to=$('abf-to').value;
+  if(!eid||!fr||!to){toast('Bitte alle Pflichtfelder ausfüllen','error');return}
+  ABSENCES.push({id:'a'+Date.now(),empId:eid,type:absType,from:fr,to,note:$('abf-note').value});
+  closeModal('abs-modal');renderAbs();addAudit(`Abwesenheit: ${eName(eById(eid))}`);toast('Abwesenheit eingetragen');
+}
+function delAbs(id){ABSENCES=ABSENCES.filter(a=>a.id!==id);renderAbs();toast('Gelöscht','info')}
+
+function renderWH(){
+  const sel=$('wh-emp-sel');
+  if(!sel.options.length)EMPS.forEach(e=>{const o=document.createElement('option');o.value=e.id;o.textContent=eName(e);sel.appendChild(o)});
+  const eid=sel.value||EMPS[0]?.id;if(!eid)return;
+  const emp=eById(eid);const now=new Date();
+  const ms=SHIFTS.filter(s=>s.empId===eid&&new Date(s.date).getMonth()===now.getMonth()&&new Date(s.date).getFullYear()===now.getFullYear());
+  const act=ms.reduce((s,x)=>s+(ST[x.type]?.h||0),0);const tgt=Math.round(emp.weeklyHours/5*21);const bal=act-tgt;const pct=Math.min(100,Math.round(act/tgt*100))||0;
+  $('wh-content').innerHTML=`<div class="stats-grid" style="margin-bottom:20px"><div class="stat-card blue"><div class="stat-val">${act}h</div><div class="stat-lbl">Ist-Stunden</div></div><div class="stat-card"><div class="stat-val">${tgt}h</div><div class="stat-lbl">Soll-Stunden</div></div><div class="stat-card ${bal>=0?'green':'red'}"><div class="stat-val">${bal>=0?'+':''}${bal}h</div><div class="stat-lbl">Saldo</div></div><div class="stat-card"><div class="stat-val">${ms.length}</div><div class="stat-lbl">Dienste</div></div></div>
+  <div class="card"><div class="card-title">Monatsverlauf</div><div class="wh-bar-wrap" style="height:12px;margin-bottom:10px"><div class="wh-bar" style="width:${pct}%;background:${bal>=0?'var(--green)':'var(--red)'}"></div></div>
+  <div style="overflow-x:auto"><table class="wh-table"><thead><tr><th>Datum</th><th>Schicht</th><th>Beginn</th><th>Ende</th><th>Std</th></tr></thead><tbody>${ms.length===0?'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Keine Dienste in diesem Monat</td></tr>':ms.map(s=>{const st=ST[s.type];return`<tr><td class="mono">${fmtL(s.date)}</td><td><span style="background:${st.bg};color:${st.color};padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${st.label}</span></td><td class="mono">${st.start}</td><td class="mono">${st.end}</td><td class="mono">${st.h}h</td></tr>`}).join('')}</tbody></table></div></div>`;
+}
+
+function initAIChat(){$('ai-chat').innerHTML=`<div class="ai-msg"><div class="ai-av">KI</div><div class="ai-bubble"><p>Hallo! Ich bin Ihr KI-Planungsassistent. Ich erstelle ArbZG-konforme Dienstpläne, erkenne Verstöße in Echtzeit und schlage Einspringer vor.</p><p style="margin-top:6px;color:var(--muted)">Wählen Sie einen Zeitraum und klicken Sie auf „KI-Plan erstellen".</p></div></div>`}
+function addAIMsg(text,role='ai'){const isU=role==='user';const d=document.createElement('div');d.className='ai-msg';d.innerHTML=`<div class="ai-av" style="${isU?'background:var(--blue-dark)':'background:var(--navy)'}">${isU?'Du':'KI'}</div><div class="ai-bubble ${isU?'ai-bubble-user':''}">${text.split('\n').map(l=>`<p>${l}</p>`).join('')}</div>`;$('ai-chat').appendChild(d);$('ai-chat').scrollTop=$('ai-chat').scrollHeight}
+function addAILoad(){const d=document.createElement('div');d.className='ai-msg';d.id='ai-load';d.innerHTML=`<div class="ai-av" style="background:var(--navy)">KI</div><div class="ai-bubble"><span>Plane</span> <span class="dot-anim"><span>.</span><span>.</span><span>.</span></span></div>`;$('ai-chat').appendChild(d);$('ai-chat').scrollTop=$('ai-chat').scrollHeight}
+
+async function runAI(){
+  const fr=$('ai-from').value,to=$('ai-to').value;
+  if(!fr||!to){toast('Bitte Zeitraum wählen','error');return}
+  addAIMsg(`Erstelle Dienstplan ${fr} bis ${to}. Ziel: ${$('ai-goal').options[$('ai-goal').selectedIndex].text}`,'user');
+  addAILoad();await new Promise(r=>setTimeout(r,1600));$('ai-load')?.remove();
+  const goal=$('ai-goal').value;
+  const d1=new Date(fr),d2=new Date(to);const days=[];
+  for(let d=new Date(d1);d<=d2;d.setDate(d.getDate()+1))days.push(ds(new Date(d)));
+  const nS=[];const eH={};EMPS.forEach(e=>eH[e.id]=0);let sid=Date.now();
+  for(const day of days){
+    const dow=new Date(day).getDay();
+    for(const type of['early','late','night']){
+      const need=type==='night'?1:2;let asgn=0;
+      const sorted=[...EMPS].sort((a,b)=>eH[a.id]-eH[b.id]);
+      for(const emp of sorted){
+        if(asgn>=need)break;
+        if(ABSENCES.some(a=>a.empId===emp.id&&a.from<=day&&a.to>=day))continue;
+        if(emp.unavailDays.includes(dow))continue;
+        if(eH[emp.id]+8>emp.weeklyHours*1.3)continue;
+        if(goal==='satisfaction'&&emp.shiftPrefs.length&&!emp.shiftPrefs.includes(type))continue;
+        nS.push({id:'ai'+sid++,empId:emp.id,date:day,type,note:'KI-geplant',ai:true});eH[emp.id]+=8;asgn++;
+      }
+    }
+  }
+  const vs=chkViols(nS,EMPS);aiRes=nS;
+  const msg=[`✅ ${nS.length} Dienste für ${days.length} Tage geplant`,`📊 Abdeckungsrate: ${Math.min(100,Math.round(nS.length/(days.length*3)*100))}%`,vs.length===0?'✅ Keine ArbZG-Verstöße':'⚠️ '+vs.length+' Verstöße',goal==='balanced'?'⚖️ Gleichmäßig verteilt':'',goal==='satisfaction'?'💚 Wünsche berücksichtigt':''].filter(Boolean).join('\n');
+  addAIMsg(msg);
+  $('ai-result-panel').classList.remove('hidden');
+  $('ai-result-panel').innerHTML=`<div class="ai-result"><div class="ai-result-hdr"><h4>Planungsvorschlag – ${nS.length} Dienste</h4><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="rejectAI()">Ablehnen</button><button class="btn btn-primary btn-sm" onclick="acceptAI()">✓ Übernehmen</button></div></div><div style="padding:14px"><div class="stats-grid" style="margin-bottom:10px"><div class="stat-card blue" style="padding:10px 12px"><div class="stat-val" style="font-size:20px">${nS.length}</div><div class="stat-lbl">Dienste</div></div><div class="stat-card green" style="padding:10px 12px"><div class="stat-val" style="font-size:20px">${Math.min(100,Math.round(nS.length/(days.length*3)*100))}%</div><div class="stat-lbl">Abdeckung</div></div><div class="stat-card red" style="padding:10px 12px"><div class="stat-val" style="font-size:20px">${vs.length}</div><div class="stat-lbl">Verstöße</div></div></div><div style="font-size:12px;color:var(--muted)">Vorschau: ${nS.slice(0,4).map(s=>`${eById(s.empId)?.firstname} (${s.date} ${ST[s.type].label})`).join(', ')}${nS.length>4?' +'+( nS.length-4)+' weitere':''}</div></div></div>`;
+}
+function acceptAI(){if(!aiRes)return;SHIFTS=[...SHIFTS.filter(s=>!s.ai),...aiRes];const c=aiRes.length;aiRes=null;$('ai-result-panel').classList.add('hidden');addAudit(`KI-Dienstplan übernommen (${c} Dienste)`);toast('KI-Dienste übernommen');navigate('schedule')}
+function rejectAI(){aiRes=null;$('ai-result-panel').classList.add('hidden');addAIMsg('Plan abgelehnt. Ich kann einen neuen Vorschlag erstellen.')}
+function findSub(){
+  const date=$('sub-date').value,qual=$('sub-qual').value;
+  const avail=EMPS.filter(emp=>{
+    if(qual&&!emp.qualifications.includes(qual))return false;
+    if(ABSENCES.some(a=>a.empId===emp.id&&a.from<=date&&a.to>=date))return false;
+    if(SHIFTS.some(s=>s.empId===emp.id&&s.date===date))return false;
+    if(emp.unavailDays.includes(new Date(date).getDay()))return false;
+    return true;
+  }).map(emp=>({emp,score:Math.round(60+Math.random()*40)})).sort((a,b)=>b.score-a.score).slice(0,5);
+  $('sub-results').innerHTML=avail.length===0?'<p style="font-size:12px;color:var(--muted)">Keine verfügbaren Mitarbeiter.</p>':
+    `<div style="font-size:11px;color:var(--muted);margin-bottom:6px">${avail.length} verfügbar:</div>`+
+    avail.map(({emp,score})=>`<div class="sub-item"><div style="width:24px;height:24px;border-radius:50%;background:${eCol(emp)};color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${eInit(emp)}</div><div style="flex:1"><div style="font-size:12px;font-weight:500">${eName(emp)}</div><div style="font-size:10px;color:var(--muted)">${emp.qualifications[0]||'Verfügbar'}</div></div><span class="sub-match">${score}%</span><button class="btn btn-ghost btn-sm" onclick="assignSub('${emp.id}','${date}')">Einteilen</button></div>`).join('');
+}
+function assignSub(eid,date){SHIFTS.push({id:'s'+Date.now(),empId:eid,date,type:'early',note:'Einspringer',ai:false});$('sub-results').innerHTML='<p style="font-size:12px;color:var(--green)">✅ Einspringer eingeteilt!</p>';addAudit(`Einspringer: ${eName(eById(eid))} am ${date}`);toast('Einspringer eingeteilt')}
+
+function renderSettings(tab){
+  $$('.settings-nav-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes(`'${tab}'`)));
+  if(tab==='facility')$('settings-content').innerHTML=`<div class="card"><div class="card-title">Einrichtungsdaten</div><div class="field"><label>Name</label><input value="Pflegezentrum Sonnenschein"></div><div class="field-row"><div class="field"><label>Typ</label><select><option>Pflegeheim</option><option>Ambulanter Dienst</option><option>Krankenhaus</option></select></div><div class="field"><label>Betten</label><input type="number" value="80"></div></div><div class="field"><label>Adresse</label><input value="Musterstraße 1, 12345 Berlin"></div><button class="btn btn-primary btn-sm" style="margin-top:4px" onclick="toast('Einstellungen gespeichert')">Speichern</button></div>`;
+  else if(tab==='shifts')$('settings-content').innerHTML=`<div class="card"><div class="card-title">Schichtmodelle</div>${Object.entries(ST).map(([k,s])=>`<div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg);border-radius:var(--rad-sm);margin-bottom:8px"><div style="width:8px;height:38px;border-radius:3px;background:${s.color};flex-shrink:0"></div><div style="flex:1"><strong style="font-size:13px">${s.label}</strong><br><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">${s.start}–${s.end} (${s.h}h)</span></div><button class="btn btn-ghost btn-sm">Bearbeiten</button></div>`).join('')}</div>`;
+  else if(tab==='users')$('settings-content').innerHTML=`<div class="card"><div class="card-title">Benutzerkonten</div><table class="wh-table"><thead><tr><th>Benutzer</th><th>E-Mail</th><th>Rolle</th></tr></thead><tbody>${USERS.map(u=>`<tr><td>${u.empId?eName(eById(u.empId)):'Administrator'}</td><td class="mono" style="font-size:11px">${u.email}</td><td><span class="badge badge-blue">${RL[u.role]}</span></td></tr>`).join('')}</tbody></table></div>`;
+  else if(tab==='dsgvo')$('settings-content').innerHTML=`<div class="card"><div class="card-title">Datenschutz (DSGVO)</div><div style="font-size:13px;line-height:1.7"><p><strong>Datenspeicherung:</strong> Produktionsversion: ausschließlich verschlüsselt auf deutschen Servern (ISO 27001).</p><div class="divider"></div><p><strong>Betroffenenrechte:</strong> Auskunft, Berichtigung, Löschung, Datenübertragbarkeit (Art. 15–20 DSGVO).</p><div class="divider"></div><p><strong>Löschfristen:</strong> Arbeitszeitdaten: 2 Jahre (§16 ArbZG). Personaldaten: nach gesetzlichen Fristen.</p><div class="divider"></div><p><strong>Audit-Protokoll:</strong> Alle Zugriffe und Änderungen werden DSGVO-konform protokolliert.</p><div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="toast('DSGVO-Bericht gestartet','info')">📄 Datenschutzbericht</button><button class="btn btn-ghost btn-sm" onclick="toast('Anfrage gesendet','info')">✉️ Datenschutzbeauftragter</button></div></div></div>`;
+}
+function showSettingsTab(tab,btn){$$('.settings-nav-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderSettings(tab)}
+
+function addAudit(action){const u=CU;const e=eById(u?.empId);const name=e?eName(e):'Administrator';const time=new Date().toLocaleString('de-DE',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});AUDIT.unshift({id:Date.now(),time,action,user:name})}
+function renderAudit(){$('audit-list').innerHTML=AUDIT.map(a=>`<div class="audit-item"><span class="audit-time">${a.time}</span><span class="audit-action">${a.action}</span><span class="audit-user">${a.user}</span></div>`).join('')}
+
+function closeModal(id){hide(id)}
+let tid=0;
+function toast(msg,type='success'){
+  const icons={success:'✅',error:'❌',info:'ℹ️'};
+  const el=document.createElement('div');el.className=`toast toast-${type}`;
+  el.textContent=`${icons[type]||'✅'} ${msg}`;$('toast-container').appendChild(el);
+  setTimeout(()=>el.remove(),3000);
+}
+
+window.addEventListener('keydown',e=>{if(e.key==='Escape')['shift-modal','emp-modal','abs-modal'].forEach(closeModal)});
+
+// ═══════════════════════════════════════════════════════════
+// 🚨 DIENSTAUSFALL SMS ALERT SYSTEM
+// ═══════════════════════════════════════════════════════════
+
+let signalStep = 'config';
+let signalSelectedShift = 'early';
+let signalReason = 'Krankheit';
+let signalSelectedEmps = new Set();
+
+// Demo-Telefonnummern (in Produktion aus Mitarbeiterprofil)
+const DEMO_PHONES = {
+  e1:'+49 151 1001 0001', e2:'+49 151 1001 0002', e3:'+49 151 1001 0003',
+  e4:'+49 151 1001 0004', e5:'+49 151 1001 0005', e6:'+49 151 1001 0006',
+  e7:'+49 151 1001 0007',
+};
+
+function openSignalModal() {
+  signalStep = 'config';
+  signalSelectedShift = 'early';
+  signalReason = 'Krankheit';
+  signalSelectedEmps = new Set(EMPS.map(e => e.id)); // Alle vorausgewählt
+
+  // Datum auf heute setzen
+  $('smo-date').value = tod();
+
+  // Schicht-Karten rendern
+  $('smo-shift-grid').innerHTML = Object.entries(ST).map(([key, st]) => `
+    <div class="smo-shift-card ${key==='early'?'selected':''}" data-shift="${key}" onclick="selectShift('${key}',this)">
+      <div class="smo-shift-label" style="color:${st.color}">${st.label}</div>
+      <div class="smo-shift-time">${st.start} – ${st.end}</div>
+    </div>`).join('');
+
+  // Mitarbeiter-Liste rendern
+  renderSignalEmpList();
+
+  // SMS-Text generieren
+  generateSMSText();
+
+  // Views zurücksetzen
+  $('smo-step-config').classList.remove('hidden');
+  $('smo-step-sending').classList.add('hidden');
+  $('smo-foot').classList.remove('hidden');
+  $('smo-close-btn').style.display = '';
+  $('smo-progress-bar').style.width = '0%';
+  $('smo-results').innerHTML = '';
+  $('smo-summary').classList.add('hidden');
+
+  show('signal-modal');
+  updateSignalCount();
+}
+
+function closeSignalModal() {
+  if (signalStep === 'sending') return; // Nicht schließen während Senden
+  hide('signal-modal');
+}
+
+function selectShift(key, el) {
+  signalSelectedShift = key;
+  $$('.smo-shift-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  generateSMSText();
+}
+
+function setReason(reason, btn) {
+  signalReason = reason;
+  $$('.smo-reason').forEach(b => {
+    b.classList.remove('active');
+    b.style.borderColor = '';
+    b.style.color = '';
+  });
+  btn.classList.add('active');
+  btn.style.borderColor = '#dc2626';
+  btn.style.color = '#dc2626';
+  generateSMSText();
+}
+
+function generateSMSText() {
+  const shift = ST[signalSelectedShift];
+  const date = $('smo-date').value;
+  const dateFormatted = date ? new Date(date).toLocaleDateString('de-DE', {weekday:'long',day:'2-digit',month:'2-digit'}) : 'Heute';
+  const facility = 'Pflegezentrum Sonnenschein';
+  const text = `[DRINGEND] ${facility}: ${dateFormatted} fällt der ${shift.label}dienst (${shift.start}-${shift.end}) wegen ${signalReason} aus. Können Sie einspringen? Bitte SOFORT antworten oder anrufen: 030 12345678`;
+  $('smo-custom-msg').value = text;
+  updateSMSPreview(text);
+}
+
+function onMsgInput() {
+  const text = $('smo-custom-msg').value;
+  updateSMSPreview(text);
+}
+
+function updateSMSPreview(text) {
+  const count = text.length;
+  $('smo-char-count').textContent = count;
+  $('smo-char-count').style.color = count > 160 ? '#dc2626' : count > 130 ? '#f59e0b' : '#6b7280';
+  $('smo-sms-preview').textContent = text || '(Leer)';
+}
+
+function renderSignalEmpList() {
+  $('smo-emp-list').innerHTML = EMPS.map(emp => {
+    const phone = DEMO_PHONES[emp.id] || '+49 000 0000000';
+    const isSelected = signalSelectedEmps.has(emp.id);
+    const color = eCol(emp);
+    const isAbsent = ABSENCES.some(a => a.empId === emp.id && a.from <= tod() && a.to >= tod());
+    return `
+    <div class="smo-emp-row ${isSelected?'selected':''}" onclick="toggleEmp('${emp.id}',this)" id="smo-row-${emp.id}">
+      <div class="smo-emp-check">${isSelected?'✓':''}</div>
+      <div style="width:28px;height:28px;border-radius:50%;background:${color};color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">${eInit(emp)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="smo-emp-name">${eName(emp)} ${isAbsent?'<span style="font-size:10px;color:#ef4444;font-weight:600">(Abwesend)</span>':''}</div>
+        <div class="smo-emp-info">${RL[emp.role]} · ${emp.qualifications[0]||'–'}</div>
+      </div>
+      <div class="smo-emp-phone">${phone}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleEmp(id, el) {
+  if (signalSelectedEmps.has(id)) {
+    signalSelectedEmps.delete(id);
+    el.classList.remove('selected');
+    el.querySelector('.smo-emp-check').textContent = '';
+  } else {
+    signalSelectedEmps.add(id);
+    el.classList.add('selected');
+    el.querySelector('.smo-emp-check').textContent = '✓';
+  }
+  updateSignalCount();
+}
+
+function toggleAllEmps() {
+  if (signalSelectedEmps.size === EMPS.length) {
+    signalSelectedEmps.clear();
+    $$('.smo-emp-row').forEach(r => { r.classList.remove('selected'); r.querySelector('.smo-emp-check').textContent=''; });
+  } else {
+    EMPS.forEach(e => signalSelectedEmps.add(e.id));
+    $$('.smo-emp-row').forEach(r => { r.classList.add('selected'); r.querySelector('.smo-emp-check').textContent='✓'; });
+  }
+  updateSignalCount();
+}
+
+function updateSignalCount() {
+  const n = signalSelectedEmps.size;
+  $('smo-sel-count').textContent = `${n} ausgewählt`;
+  $('smo-foot-count').textContent = n;
+  $('smo-send-btn').disabled = n === 0;
+}
+
+// ── SENDE-ANIMATION ──
+async function startSending() {
+  if (signalSelectedEmps.size === 0) { toast('Bitte mindestens einen Empfänger auswählen', 'error'); return; }
+
+  signalStep = 'sending';
+  const msg = $('smo-custom-msg').value.trim();
+  if (!msg) { toast('Bitte SMS-Text eingeben', 'error'); return; }
+
+  // UI wechseln
+  $('smo-step-config').classList.add('hidden');
+  $('smo-step-sending').classList.remove('hidden');
+  $('smo-foot').classList.add('hidden');
+  $('smo-close-btn').style.display = 'none';
+
+  const recipients = EMPS.filter(e => signalSelectedEmps.has(e.id));
+  const total = recipients.length;
+  let sent = 0, failed = 0;
+
+  $('smo-results').innerHTML = recipients.map(emp =>
+    `<div class="smo-result-row smo-result-wait" id="smo-res-${emp.id}">
+      <span style="font-size:16px">⏳</span>
+      <span style="flex:1;font-weight:500">${eName(emp)}</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px">${DEMO_PHONES[emp.id]||'–'}</span>
+      <span>Warte…</span>
+    </div>`).join('');
+
+  // Sequentiell senden mit Verzögerung
+  for (let i = 0; i < recipients.length; i++) {
+    const emp = recipients[i];
+    await new Promise(r => setTimeout(r, 400 + Math.random() * 500));
+
+    // 95% Erfolgsrate Simulation
+    const ok = Math.random() > 0.05;
+    const row = $(`smo-res-${emp.id}`);
+
+    if (ok) {
+      sent++;
+      row.className = 'smo-result-row smo-result-ok';
+      row.innerHTML = `<span style="font-size:16px">✅</span><span style="flex:1;font-weight:500">${eName(emp)}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px">${DEMO_PHONES[emp.id]||'–'}</span><span style="font-weight:600">Gesendet</span>`;
+    } else {
+      failed++;
+      row.className = 'smo-result-row smo-result-err';
+      row.innerHTML = `<span style="font-size:16px">❌</span><span style="flex:1;font-weight:500">${eName(emp)}</span><span style="font-family:'JetBrains Mono',monospace;font-size:10px">${DEMO_PHONES[emp.id]||'–'}</span><span style="font-weight:600">Fehler</span>`;
+    }
+
+    // Fortschrittsbalken
+    const progress = Math.round(((i + 1) / total) * 100);
+    $('smo-progress-bar').style.width = progress + '%';
+    $('smo-send-title').textContent = `SMS werden versendet… (${i+1}/${total})`;
+    $('smo-send-sub').textContent = `Sende an ${eName(emp)}…`;
+  }
+
+  // Abschluss
+  signalStep = 'done';
+  $('smo-send-icon').textContent = '🎯';
+  $('smo-send-title').textContent = 'Alle SMS versendet!';
+  $('smo-send-sub').textContent = '';
+
+  const shift = ST[signalSelectedShift];
+  $('smo-summary').classList.remove('hidden');
+  $('smo-summary').innerHTML = `
+    <div class="smo-summary">
+      <h4>✅ Alert erfolgreich verschickt</h4>
+      <p>${sent} von ${total} SMS zugestellt · ${failed > 0 ? failed+' fehlgeschlagen' : 'Alle erfolgreich'}</p>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:14px">
+      <button class="btn btn-ghost" onclick="closeSignalModal()">Schließen</button>
+      <button class="btn btn-primary btn-sm" onclick="closeSignalModal();navigate('ai')">Einspringer in KI suchen →</button>
+    </div>`;
+  $('smo-close-btn').style.display = '';
+
+  // Audit-Log & Toast
+  addAudit(`🚨 Dienstausfall SMS gesendet: ${sent}/${total} MA kontaktiert (${shift.label}dienst, ${$('smo-date').value})`);
+  toast(`✅ ${sent} SMS gesendet — ${eName(EMPS[0])} und ${sent-1} weitere kontaktiert`, 'success');
+}
+</script>
+</body>
+</html>
