@@ -815,7 +815,11 @@ input:focus,select:focus{border-color:var(--blue)}
           <div class="field"><label>Rolle</label><select id="ef-role"><option value="employee">Mitarbeiter</option><option value="team_lead">Teamleitung</option><option value="manager">Leitung</option></select></div>
           <div class="field"><label>Beschäftigung</label><select id="ef-employment"><option value="fulltime">Vollzeit</option><option value="parttime">Teilzeit</option><option value="minijob">Minijob</option></select></div>
         </div>
-        <div class="field-row"><div class="field"><label>Soll-Stunden/Woche</label><input type="number" id="ef-weekly" value="40" min="0" max="48"></div><div class="field"><label>Urlaubstage/Jahr</label><input type="number" id="ef-vacation" value="30"></div></div>
+        <div class="field-row">
+          <div class="field"><label>Soll-Stunden/Woche</label><input type="number" id="ef-weekly" value="40" min="0" max="48"></div>
+          <div class="field"><label>Urlaubstage/Jahr</label><input type="number" id="ef-vacation" value="30"></div>
+        </div>
+        <div class="field"><label>Station</label><select id="ef-station"></select></div>
       </div>
       <div id="emp-tab-work" class="tab-pane">
         <div class="field"><label>Bevorzugte Schichten</label>
@@ -982,13 +986,6 @@ let TRAININGS=[
 ];
 // Schichttausch-Anfragen zwischen Mitarbeitern (Demo-Daten, KI prüft jede Anfrage)
 let SWAPS=[];
-// Kosten-Konfiguration – Stundensätze & Zuschläge. Bis zur DATEV-Anbindung als Konstante gepflegt.
-const COST_CONFIG={
-  baseHourlyRate:19.5,          // Ø Stundensatz Pflegepersonal (EUR)
-  overtimeSurcharge:0.25,       // 25% Zuschlag auf Überstunden
-  nightSurcharge:0.20,          // 20% Nachtzuschlag (22–6 Uhr)
-  weekendSurcharge:0.15,        // 15% Wochenendzuschlag (Sa/So)
-};
 // ═══════════════════════════════════════════════════════════════════════
 // INTEGRATIONS-KONFIGURATION (Architektur-Vorbereitung)
 // ─────────────────────────────────────────────────────────────────────
@@ -1005,7 +1002,7 @@ const COST_CONFIG={
 //   sms      → produktiv würde startSending() eine REST-Route ansprechen
 //              (z.B. Twilio/Sipgate), statt die Zustellung zu simulieren
 //   whatsapp → alternativer Versandkanal für den Dienstausfall-Alert
-//   datev    → Export der Arbeitszeit-/Kostendaten (Personalkosten-Kennzahl im Dashboard)
+//   datev    → Export der Arbeitszeit-/Lohndaten an das Lohnabrechnungssystem
 //   backend  → Node.js/Express REST-API vor einer PostgreSQL-Datenbank;
 //              ersetzt die aktuellen In-Memory-Arrays (EMPS, SHIFTS, …)
 //              1:1 durch fetch()-Aufrufe gegen die angegebene baseUrl
@@ -1093,7 +1090,7 @@ function getViols(){return chkViols(SHIFTS,EMPS)}
 // PFLEGEPILOT — KI-SERVICE-SCHICHT
 // ─────────────────────────────────────────────────────────────────────
 // Alle KI-Funktionen (Begrüßung, Chat, Dienstplan-Analyse, Einspringer-Suche,
-// Personalrisiko, Personalkosten, Schichttausch-Prüfung) laufen zentral über
+// Personalrisiko, Schichttausch-Prüfung) laufen zentral über
 // dieses Objekt. Die Logik arbeitet heute regelbasiert auf den lokalen
 // Demo-Daten (EMPS/SHIFTS/ABSENCES/TRAININGS) – exakt an den Stellen, die
 // mit "INTEGRATION:" markiert sind, wird später Integrations.openai über
@@ -1252,26 +1249,6 @@ const AIService={
     const forecastText=affected.length>0?`In der Kalenderwoche ${forecastWeek} ${affected.length===1?'fehlt voraussichtlich eine examinierte Pflegekraft':'fehlen voraussichtlich '+affected.length+' examinierte Pflegekräfte'} durch geplanten Urlaub.`:'Für die kommenden Wochen ist laut aktueller Planung keine kritische Unterbesetzung zu erwarten.';
     const overall=departments.some(d=>d.level==='red')?'red':departments.some(d=>d.level==='amber')?'amber':'green';
     return{departments,overall,forecastText,openShifts:gaps.length};
-  },
-
-  // Personalkosten: Überstunden-, Nacht- und Wochenendkosten (Grundlage für die Personalkosten-Kennzahl im Dashboard).
-  computeCosts(){
-    const monthStart=new Date(new Date().getFullYear(),new Date().getMonth(),1);
-    const monthEnd=new Date(new Date().getFullYear(),new Date().getMonth()+1,0);
-    const monthShifts=SHIFTS.filter(s=>{const d=new Date(s.date);return d>=monthStart&&d<=monthEnd});
-    let overtimeHours=0;EMPS.forEach(e=>{const h=hoursInWeek(e.id,weekStart);if(h>e.weeklyHours)overtimeHours+=(h-e.weeklyHours)});
-    const nightHours=monthShifts.filter(s=>s.type==='night').reduce((sum,s)=>sum+(ST[s.type].h||0),0);
-    const weekendHours=monthShifts.filter(s=>[0,6].includes(new Date(s.date).getDay())).reduce((sum,s)=>sum+(ST[s.type]?.h||0),0);
-    const totalHours=monthShifts.reduce((sum,s)=>sum+(ST[s.type]?.h||0),0);
-    const rate=COST_CONFIG.baseHourlyRate;
-    const baseCost=totalHours*rate;
-    const overtimeCost=overtimeHours*rate*(1+COST_CONFIG.overtimeSurcharge);
-    const nightCost=nightHours*rate*COST_CONFIG.nightSurcharge;
-    const weekendCost=weekendHours*rate*COST_CONFIG.weekendSurcharge;
-    const savableHours=Math.round(overtimeHours*0.6);
-    const savingsPotential=savableHours*rate*(1+COST_CONFIG.overtimeSurcharge);
-    return{overtimeHours:Math.round(overtimeHours),overtimeCost:Math.round(overtimeCost),nightHours,nightCost:Math.round(nightCost),weekendHours,weekendCost:Math.round(weekendCost),
-      estimatedTotal:Math.round(baseCost+overtimeCost+nightCost+weekendCost),savableHours,savingsPotential:Math.round(savingsPotential)};
   },
 
   // Schichttausch-Prüfung: ArbZG, Qualifikation, Ruhezeiten, Vertragsstunden.
@@ -1452,7 +1429,7 @@ function renderEmps(){
     const ms=SHIFTS.filter(s=>s.empId===emp.id&&new Date(s.date).getMonth()===now.getMonth());
     const act=ms.reduce((s,x)=>s+(ST[x.type]?.h||0),0);const tgt=Math.round(emp.weeklyHours/5*21);
     const pct=Math.min(100,Math.round(act/tgt*100))||0;const bc=act>tgt+10?col:act<tgt-10?'var(--red)':'var(--green)';
-    return `<div class="emp-card"><div class="emp-card-hdr"><div class="emp-big-av" style="background:${col}">${eInit(emp)}</div><div><div class="emp-fullname">${eName(emp)}</div><div class="emp-title">${RL[emp.role]} · ${emp.weeklyHours}h/W</div></div></div>
+    return `<div class="emp-card"><div class="emp-card-hdr"><div class="emp-big-av" style="background:${col}">${eInit(emp)}</div><div><div class="emp-fullname">${eName(emp)}</div><div class="emp-title">${RL[emp.role]} · ${emp.weeklyHours}h/W · ${emp.department}</div></div></div>
       <div class="emp-tags">${emp.qualifications.slice(0,3).map(q=>`<span class="tag tag-blue">${q}</span>`).join('')}${emp.qualifications.length>3?`<span class="tag">+${emp.qualifications.length-3}</span>`:''}</div>
       <div style="margin-top:8px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px"><span>Stunden (Monat)</span><span class="mono">${act}h/${tgt}h</span></div><div class="wh-bar-wrap"><div class="wh-bar" style="width:${pct}%;background:${bc}"></div></div></div>
       <div class="emp-card-footer"><span style="font-size:11px;color:var(--muted)">${emp.email}</span>${CU?.role!=='employee'?`<span style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="openEmpModal('${emp.id}')">Bearbeiten</button><button class="btn btn-ghost btn-sm btn-icon" onclick="delEmployee('${emp.id}')" title="Mitarbeiter löschen">🗑</button></span>`:''}</div></div>`;
@@ -1477,6 +1454,8 @@ function openEmpModal(id=''){
   $('emp-modal-title').textContent=emp?'Mitarbeiter bearbeiten':'Mitarbeiter anlegen';
   $('ef-first').value=emp?.firstname||'';$('ef-last').value=emp?.lastname||'';$('ef-email').value=emp?.email||'';$('ef-phone').value=emp?.phone||'';
   $('ef-role').value=emp?.role||'employee';$('ef-employment').value=emp?.employment||'fulltime';$('ef-weekly').value=emp?.weeklyHours||40;$('ef-vacation').value=emp?.vacationDays||30;
+  $('ef-station').innerHTML=DEPARTMENTS.map(d=>`<option value="${d}">${d}</option>`).join('');
+  $('ef-station').value=emp?.department||DEPARTMENTS[0];
   $$('[name=pref]').forEach(c=>c.checked=emp?.shiftPrefs?.includes(c.value)||false);
   $$('[name=unavail]').forEach(c=>c.checked=emp?.unavailDays?.includes(+c.value)||false);
   $('qualif-list').innerHTML=QUALS.map(q=>`<label class="qualif-item"><input type="checkbox" name="qualif" value="${q}"${emp?.qualifications?.includes(q)?' checked':''}> ${q}</label>`).join('');
@@ -1504,9 +1483,9 @@ function saveEmployee(){
   const wishes={preferShift:$('ef-pref-shift').value||null,noNight:$('ef-no-night').checked,maxWeekends:$('ef-max-weekends').value?+$('ef-max-weekends').value:null,wishFreeDays:[...efWishFree]};
   const existing=id?eById(id):null;
   const data={firstname:first,lastname:last,email,phone:$('ef-phone').value,role:$('ef-role').value,employment:$('ef-employment').value,weeklyHours:+$('ef-weekly').value,vacationDays:+$('ef-vacation').value,shiftPrefs:prefs,unavailDays:unavail,qualifications:qualifs,wishes,
-    department:existing?.department||DEPARTMENTS[EMPS.length%DEPARTMENTS.length],lastSubDate:existing?.lastSubDate||ds(addDays(new Date(),-10))};
+    department:$('ef-station').value||DEPARTMENTS[0],lastSubDate:existing?.lastSubDate||ds(addDays(new Date(),-10))};
   if(id)EMPS=EMPS.map(e=>e.id===id?{...e,...data}:e);else EMPS.push({id:'e'+Date.now(),...data});
-  closeModal('emp-modal');renderEmps();toast(id?'Mitarbeiter aktualisiert':'Mitarbeiter angelegt');addAudit(`${id?'Mitarbeiter aktualisiert':'Neuer Mitarbeiter'}: ${first} ${last}`);
+  closeModal('emp-modal');renderEmps();updRiskBadge();toast(id?'Mitarbeiter aktualisiert':'Mitarbeiter angelegt');addAudit(`${id?'Mitarbeiter aktualisiert':'Neuer Mitarbeiter'}: ${first} ${last}`);
 }
 function showEmpTab(t,btn){
   ['base','work','qualif','wishes'].forEach(x=>$(`emp-tab-${x}`).classList.toggle('active',x===t));
@@ -1636,7 +1615,6 @@ function renderDashboard(){
   const sick=AIService.getSickToday();
   const vacToday=ABSENCES.filter(a=>a.type==='vacation'&&a.from<=tod()&&a.to>=tod());
   const overtime=EMPS.reduce((sum,e)=>sum+Math.max(0,hoursInWeek(e.id,weekStart)-e.weeklyHours),0);
-  const costs=AIService.computeCosts();
   const viols=getViols();
   const tiles=[
     {icon:'🗓️',val:gaps.length,lbl:'Offene Schichten',go:'schedule'},
@@ -1645,7 +1623,6 @@ function renderDashboard(){
     {icon:'⏳',val:AIService.getExpiringTrainings(30).length,lbl:'Ablaufende Qualifikationen',go:'employees'},
     {icon:'⏱️',val:Math.round(overtime)+'h',lbl:'Überstunden (Woche)',go:'workhours'},
     {icon:'🏖️',val:vacToday.length,lbl:'Urlaub heute',go:'absences'},
-    {icon:'💶',val:'€ '+costs.estimatedTotal.toLocaleString('de-DE'),lbl:'Personalkosten (Monat)',go:'costs'},
     {icon:'⚠️',val:viols.length,lbl:'Warnungen',go:'violations'},
     {icon:'💡',val:briefing.suggestionCount,lbl:'Vorschläge',go:'ai'},
   ];
