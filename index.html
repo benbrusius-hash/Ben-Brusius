@@ -357,12 +357,6 @@ input:focus,select:focus{border-color:var(--blue)}
 .risk-label{font-size:11.5px;color:var(--muted);margin-top:1px}
 .risk-meta{margin-left:auto;text-align:right;font-size:11px;color:var(--muted)}
 .forecast-box{display:flex;align-items:flex-start;gap:10px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius);padding:14px 16px;margin-top:4px}
-.cost-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
-.cost-tile{border-radius:var(--radius);padding:16px;border:1px solid var(--border);background:var(--surface)}
-.cost-tile .cost-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700}
-.cost-tile .cost-lbl{font-size:11px;color:var(--muted);margin-top:4px}
-.savings-box{background:var(--green-bg);border:1px solid #86efac;border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:14px}
-.savings-box .sv-num{font-size:26px;font-weight:700;color:#065f46;font-family:'JetBrains Mono',monospace}
 .chat-ask-row{display:flex;gap:8px;margin-top:10px}
 .chat-ask-row input{flex:1}
 .chat-suggest{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
@@ -498,9 +492,6 @@ input:focus,select:focus{border-color:var(--blue)}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>Personalrisiko
           <span class="nav-badge" id="risk-badge" style="display:none;background:var(--amber)">!</span>
         </button>
-        <button class="nav-item" onclick="navigate('costs')">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Kostenanalyse
-        </button>
       </div>
       <div class="nav-section hidden" id="admin-nav">
         <span class="nav-lbl">Verwaltung</span>
@@ -574,9 +565,9 @@ input:focus,select:focus{border-color:var(--blue)}
             <div><h1>Dienstplan</h1><p id="sched-subtitle"></p></div>
             <div class="ph-actions">
               <div style="display:flex;align-items:center;gap:4px">
-                <button class="btn btn-ghost btn-sm" onclick="changeWeek(-1)">‹</button>
-                <span id="week-label-top" style="font-size:13px;font-weight:600;min-width:70px;text-align:center"></span>
-                <button class="btn btn-ghost btn-sm" onclick="changeWeek(1)">›</button>
+                <button class="btn btn-ghost btn-sm" onclick="changeMonth(-1)">‹</button>
+                <span id="month-label-top" style="font-size:13px;font-weight:600;min-width:110px;text-align:center;text-transform:capitalize"></span>
+                <button class="btn btn-ghost btn-sm" onclick="changeMonth(1)">›</button>
                 <button class="btn btn-ghost btn-sm" onclick="goToday()">Heute</button>
               </div>
               <button class="btn btn-ghost btn-sm" onclick="openAnalysisModal()">🛡️ Prüfen &amp; Veröffentlichen</button>
@@ -732,22 +723,22 @@ input:focus,select:focus{border-color:var(--blue)}
 
         <!-- PERSONALRISIKO -->
         <div id="view-risk" class="view">
-          <div class="ph"><div><h1>Personalrisiko</h1><p>Ampelsystem je Wohnbereich · simulierte Prognose</p></div></div>
-          <div id="risk-rows"></div>
-          <div class="card" style="margin-top:16px">
+          <div class="ph">
+            <div><h1>Personalrisiko</h1><p>Ampelsystem &amp; Dienstplan je Station · simulierte Prognose</p></div>
+            <div class="ph-actions">
+              <div style="display:flex;align-items:center;gap:4px">
+                <button class="btn btn-ghost btn-sm" onclick="changeMonth(-1)">‹</button>
+                <span id="risk-month-label" style="font-size:13px;font-weight:600;min-width:110px;text-align:center;text-transform:capitalize"></span>
+                <button class="btn btn-ghost btn-sm" onclick="changeMonth(1)">›</button>
+                <button class="btn btn-ghost btn-sm" onclick="goToday()">Heute</button>
+              </div>
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:16px">
             <div class="card-title">Prognose</div>
             <div class="forecast-box"><span style="font-size:20px">🔮</span><div><div id="risk-forecast" style="font-size:13.5px"></div><div style="font-size:11px;color:var(--muted);margin-top:4px">Basierend auf geplantem Urlaub examinierter Pflegekräfte in den nächsten 4 Wochen (simulierte Daten).</div></div></div>
           </div>
-        </div>
-
-        <!-- KOSTENANALYSE -->
-        <div id="view-costs" class="view">
-          <div class="ph"><div><h1>Kostenanalyse</h1><p>Live-Personalkosten &amp; Einsparpotenzial (simulierte Sätze)</p></div></div>
-          <div class="cost-grid" id="cost-grid"></div>
-          <div class="savings-box">
-            <span style="font-size:26px">💰</span>
-            <div><div class="sv-num" id="cost-savings-num">0h</div><div id="cost-savings-txt" style="font-size:13px;color:#065f46"></div></div>
-          </div>
+          <div id="risk-stations"></div>
         </div>
 
         <!-- EINSTELLUNGEN -->
@@ -876,7 +867,7 @@ input:focus,select:focus{border-color:var(--blue)}
 <!-- KI-DIENSTPLAN-ANALYSE MODAL -->
 <div class="modal-overlay hidden" id="analysis-modal" onclick="if(event.target===this)closeModal('analysis-modal')">
   <div class="modal modal-lg">
-    <div class="modal-hdr"><h3>🛡️ KI-Dienstplan-Analyse — KW <span id="an-week"></span></h3><button class="btn btn-ghost btn-icon btn-sm" onclick="closeModal('analysis-modal')">✕</button></div>
+    <div class="modal-hdr"><h3>🛡️ KI-Dienstplan-Analyse — <span id="an-month" style="text-transform:capitalize"></span></h3><button class="btn btn-ghost btn-icon btn-sm" onclick="closeModal('analysis-modal')">✕</button></div>
     <div id="an-report-hdr"></div>
     <div class="modal-body" id="an-body"></div>
     <div class="modal-footer">
@@ -966,18 +957,18 @@ const AT={vacation:{label:'Urlaub',icon:'🏖️',color:'#10b981'},sick:{label:'
 const QUALS=['Pflegefachkraft','Pflegehilfskraft','Wundversorgung','Palliativpflege','Beatmungspflege','Demenzbetreuung','Ersthelfer','Hygienebeauftragter'];
 const RL={employee:'Mitarbeiter',team_lead:'Teamleitung',manager:'Leitung',admin:'Administrator'};
 const EC=['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444','#06b6d4','#6366f1','#ec4899','#14b8a6','#f43f5e'];
-// Wohnbereiche (Stationen) – Grundlage für Personalrisiko- und Kostenauswertung je Bereich
-const DEPARTMENTS=['Wohnbereich 1','Wohnbereich 2','Wohnbereich 3'];
+// Stationen – Grundlage für Personalrisiko- und Kostenauswertung je Bereich
+const DEPARTMENTS=['Station 1','Station 2','Station 3'];
 // Mindestbesetzung je Schichttyp und Tag – Basis für Lückenerkennung (Pflegepilot, Dienstplan-Analyse, Personalrisiko)
 const STAFFING_REQUIREMENTS={early:2,late:2,night:1};
 let EMPS=[
-  {id:'e1',firstname:'Anna',lastname:'Müller',role:'manager',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Palliativpflege','Ersthelfer'],shiftPrefs:['early','late'],unavailDays:[],vacationDays:30,email:'anna.mueller@pflege.de',phone:'+49 151 1001 0001',department:'Wohnbereich 1',wishes:{preferShift:'early',noNight:false,maxWeekends:null,wishFreeDays:[]},lastSubDaysAgo:12},
-  {id:'e2',firstname:'Thomas',lastname:'Schmidt',role:'team_lead',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Wundversorgung'],shiftPrefs:['late','night'],unavailDays:[0],vacationDays:30,email:'t.schmidt@pflege.de',phone:'+49 151 1001 0002',department:'Wohnbereich 2',wishes:{preferShift:'late',noNight:false,maxWeekends:2,wishFreeDays:[]},lastSubDaysAgo:21},
-  {id:'e3',firstname:'Sarah',lastname:'Weber',role:'employee',employment:'parttime',weeklyHours:25,qualifications:['Pflegehilfskraft','Ersthelfer'],shiftPrefs:['early'],unavailDays:[6,0],vacationDays:20,email:'s.weber@pflege.de',phone:'+49 151 1001 0003',department:'Wohnbereich 1',wishes:{preferShift:'early',noNight:true,maxWeekends:1,wishFreeDays:[]},lastSubDaysAgo:8},
-  {id:'e4',firstname:'Michael',lastname:'Bauer',role:'employee',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Beatmungspflege','Demenzbetreuung'],shiftPrefs:['night','early'],unavailDays:[],vacationDays:30,email:'m.bauer@pflege.de',phone:'+49 151 1001 0004',department:'Wohnbereich 2',wishes:{preferShift:null,noNight:false,maxWeekends:null,wishFreeDays:[]},lastSubDaysAgo:29},
-  {id:'e5',firstname:'Lisa',lastname:'Hoffmann',role:'employee',employment:'parttime',weeklyHours:30,qualifications:['Pflegefachkraft','Hygienebeauftragter'],shiftPrefs:['early','late'],unavailDays:[1],vacationDays:25,email:'l.hoffmann@pflege.de',phone:'+49 151 1001 0005',department:'Wohnbereich 3',wishes:{preferShift:'early',noNight:true,maxWeekends:2,wishFreeDays:[]},lastSubDaysAgo:5},
-  {id:'e6',firstname:'Klaus',lastname:'Fischer',role:'employee',employment:'fulltime',weeklyHours:40,qualifications:['Pflegehilfskraft','Demenzbetreuung'],shiftPrefs:['late','night'],unavailDays:[],vacationDays:30,email:'k.fischer@pflege.de',phone:'+49 151 1001 0006',department:'Wohnbereich 2',wishes:{preferShift:null,noNight:false,maxWeekends:null,wishFreeDays:[]},lastSubDaysAgo:17},
-  {id:'e7',firstname:'Marie',lastname:'Schneider',role:'employee',employment:'minijob',weeklyHours:15,qualifications:['Pflegehilfskraft'],shiftPrefs:['early'],unavailDays:[1,2,3],vacationDays:15,email:'m.schneider@pflege.de',phone:'+49 151 1001 0007',department:'Wohnbereich 3',wishes:{preferShift:'early',noNight:true,maxWeekends:1,wishFreeDays:[]},lastSubDaysAgo:3},
+  {id:'e1',firstname:'Anna',lastname:'Müller',role:'manager',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Palliativpflege','Ersthelfer'],shiftPrefs:['early','late'],unavailDays:[],vacationDays:30,email:'anna.mueller@pflege.de',phone:'+49 151 1001 0001',department:'Station 1',wishes:{preferShift:'early',noNight:false,maxWeekends:null,wishFreeDays:[]},lastSubDaysAgo:12},
+  {id:'e2',firstname:'Thomas',lastname:'Schmidt',role:'team_lead',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Wundversorgung'],shiftPrefs:['late','night'],unavailDays:[0],vacationDays:30,email:'t.schmidt@pflege.de',phone:'+49 151 1001 0002',department:'Station 2',wishes:{preferShift:'late',noNight:false,maxWeekends:2,wishFreeDays:[]},lastSubDaysAgo:21},
+  {id:'e3',firstname:'Sarah',lastname:'Weber',role:'employee',employment:'parttime',weeklyHours:25,qualifications:['Pflegehilfskraft','Ersthelfer'],shiftPrefs:['early'],unavailDays:[6,0],vacationDays:20,email:'s.weber@pflege.de',phone:'+49 151 1001 0003',department:'Station 1',wishes:{preferShift:'early',noNight:true,maxWeekends:1,wishFreeDays:[]},lastSubDaysAgo:8},
+  {id:'e4',firstname:'Michael',lastname:'Bauer',role:'employee',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Beatmungspflege','Demenzbetreuung'],shiftPrefs:['night','early'],unavailDays:[],vacationDays:30,email:'m.bauer@pflege.de',phone:'+49 151 1001 0004',department:'Station 2',wishes:{preferShift:null,noNight:false,maxWeekends:null,wishFreeDays:[]},lastSubDaysAgo:29},
+  {id:'e5',firstname:'Lisa',lastname:'Hoffmann',role:'employee',employment:'parttime',weeklyHours:30,qualifications:['Pflegefachkraft','Hygienebeauftragter'],shiftPrefs:['early','late'],unavailDays:[1],vacationDays:25,email:'l.hoffmann@pflege.de',phone:'+49 151 1001 0005',department:'Station 3',wishes:{preferShift:'early',noNight:true,maxWeekends:2,wishFreeDays:[]},lastSubDaysAgo:5},
+  {id:'e6',firstname:'Klaus',lastname:'Fischer',role:'employee',employment:'fulltime',weeklyHours:40,qualifications:['Pflegehilfskraft','Demenzbetreuung'],shiftPrefs:['late','night'],unavailDays:[],vacationDays:30,email:'k.fischer@pflege.de',phone:'+49 151 1001 0006',department:'Station 2',wishes:{preferShift:null,noNight:false,maxWeekends:null,wishFreeDays:[]},lastSubDaysAgo:17},
+  {id:'e7',firstname:'Marie',lastname:'Schneider',role:'employee',employment:'minijob',weeklyHours:15,qualifications:['Pflegehilfskraft'],shiftPrefs:['early'],unavailDays:[1,2,3],vacationDays:15,email:'m.schneider@pflege.de',phone:'+49 151 1001 0007',department:'Station 3',wishes:{preferShift:'early',noNight:true,maxWeekends:1,wishFreeDays:[]},lastSubDaysAgo:3},
 ];
 const USERS=[{id:'u1',empId:'e1',email:'anna.mueller@pflege.de',pw:'demo123',role:'manager'},{id:'u2',empId:'e2',email:'t.schmidt@pflege.de',pw:'demo123',role:'team_lead'},{id:'u3',empId:'e3',email:'s.weber@pflege.de',pw:'demo123',role:'employee'},{id:'adm',empId:null,email:'admin@pflege.de',pw:'admin123',role:'admin'}];
 let SHIFTS=[],ABSENCES=[{id:'a1',empId:'e3',type:'vacation',from:'2025-06-27',to:'2025-07-04',note:'Sommerurlaub'},{id:'a2',empId:'e7',type:'sick',from:'2025-06-26',to:'2025-06-26',note:''}];
@@ -1014,7 +1005,7 @@ const COST_CONFIG={
 //   sms      → produktiv würde startSending() eine REST-Route ansprechen
 //              (z.B. Twilio/Sipgate), statt die Zustellung zu simulieren
 //   whatsapp → alternativer Versandkanal für den Dienstausfall-Alert
-//   datev    → Export der Arbeitszeit-/Kostendaten (Kostenanalyse-View)
+//   datev    → Export der Arbeitszeit-/Kostendaten (Personalkosten-Kennzahl im Dashboard)
 //   backend  → Node.js/Express REST-API vor einer PostgreSQL-Datenbank;
 //              ersetzt die aktuellen In-Memory-Arrays (EMPS, SHIFTS, …)
 //              1:1 durch fetch()-Aufrufe gegen die angegebene baseUrl
@@ -1027,10 +1018,12 @@ const Integrations={
   backend:{enabled:false,baseUrl:null /* z.B. https://api.shiftmind.de */},
 };
 
-let CU=null,weekStart=wkStart(new Date()),absType='vacation',aiRes=null,vfilt='';
+let CU=null,weekStart=wkStart(new Date()),schedMonth=monthStart(new Date()),absType='vacation',aiRes=null,vfilt='';
 function ds(d){return(d instanceof Date?d:new Date(d)).toISOString().split('T')[0]}
 function wkStart(d){const n=new Date(d);const day=n.getDay();n.setDate(n.getDate()-day+(day===0?-6:1));n.setHours(0,0,0,0);return n}
 function wkDays(ws){return Array.from({length:7},(_,i)=>{const d=new Date(ws);d.setDate(d.getDate()+i);return d})}
+function monthStart(d){const n=new Date(d);n.setDate(1);n.setHours(0,0,0,0);return n}
+function monthDays(ms){const y=ms.getFullYear(),m=ms.getMonth(),last=new Date(y,m+1,0).getDate();return Array.from({length:last},(_,i)=>new Date(y,m,i+1))}
 function isoWk(d){const dt=new Date(d);dt.setHours(0,0,0,0);dt.setDate(dt.getDate()+4-(dt.getDay()||7));const y=new Date(dt.getFullYear(),0,1);return Math.ceil(((dt-y)/864e5+1)/7)}
 function fmt(d){return new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})}
 function fmtL(d){return new Date(d).toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})}
@@ -1059,10 +1052,15 @@ function seedDynamicDemoData(){
 function show(i){$(i)&&$(i).classList.remove('hidden')}
 function hide(i){$(i)&&$(i).classList.add('hidden')}
 
+// Wiederholt das wöchentliche Besetzungsmuster über den kompletten aktuellen Monat, damit
+// Dienstplan, Personalzähler und Stunden-Spalte über den ganzen Monat plausible Werte zeigen.
 function genShifts(){
-  const ws=wkStart(new Date());
   const p=[{e:'e1',d:0,t:'early'},{e:'e2',d:0,t:'late'},{e:'e4',d:0,t:'night'},{e:'e3',d:1,t:'early'},{e:'e5',d:1,t:'early'},{e:'e2',d:1,t:'late'},{e:'e6',d:1,t:'night'},{e:'e1',d:2,t:'early'},{e:'e4',d:2,t:'early'},{e:'e5',d:2,t:'late'},{e:'e6',d:2,t:'night'},{e:'e3',d:3,t:'early'},{e:'e2',d:3,t:'late'},{e:'e4',d:3,t:'night'},{e:'e1',d:4,t:'early'},{e:'e5',d:4,t:'late'},{e:'e6',d:4,t:'late'},{e:'e4',d:4,t:'night'},{e:'e7',d:5,t:'early'},{e:'e3',d:5,t:'late'},{e:'e2',d:5,t:'night'},{e:'e6',d:6,t:'early'},{e:'e4',d:6,t:'late'}];
-  let i=0;SHIFTS=p.map(x=>{const d=new Date(ws);d.setDate(d.getDate()+x.d);return{id:`s${++i}`,empId:x.e,date:ds(d),type:x.t,note:'',ai:false}});
+  let i=0;SHIFTS=[];
+  monthDays(monthStart(new Date())).forEach(day=>{
+    const mdow=(day.getDay()+6)%7; // Montag=0…Sonntag=6, passend zu den d-Werten im Muster
+    p.filter(x=>x.d===mdow).forEach(x=>{SHIFTS.push({id:`s${++i}`,empId:x.e,date:ds(day),type:x.t,note:'',ai:false})});
+  });
 }
 
 function chkViols(shifts,emps){
@@ -1095,7 +1093,7 @@ function getViols(){return chkViols(SHIFTS,EMPS)}
 // PFLEGEPILOT — KI-SERVICE-SCHICHT
 // ─────────────────────────────────────────────────────────────────────
 // Alle KI-Funktionen (Begrüßung, Chat, Dienstplan-Analyse, Einspringer-Suche,
-// Personalrisiko, Kostenanalyse, Schichttausch-Prüfung) laufen zentral über
+// Personalrisiko, Personalkosten, Schichttausch-Prüfung) laufen zentral über
 // dieses Objekt. Die Logik arbeitet heute regelbasiert auf den lokalen
 // Demo-Daten (EMPS/SHIFTS/ABSENCES/TRAININGS) – exakt an den Stellen, die
 // mit "INTEGRATION:" markiert sind, wird später Integrations.openai über
@@ -1235,7 +1233,7 @@ const AIService={
     return EMPS.map(e=>this.evalCandidate(e,date,type,qualFilter)).filter(c=>!c.excluded).sort((a,b)=>b.score-a.score);
   },
 
-  // Personalrisiko: Ampel je Wohnbereich + einfache Prognose (simulierte Daten).
+  // Personalrisiko: Ampel je Station + einfache Prognose (simulierte Daten).
   computeRisk(){
     const deptOT=this.getDepartmentOvertime();
     const sickToday=this.getSickToday();
@@ -1256,7 +1254,7 @@ const AIService={
     return{departments,overall,forecastText,openShifts:gaps.length};
   },
 
-  // Kostenanalyse: Überstunden-, Nacht- und Wochenendkosten sowie Einsparpotenzial (simulierte Sätze).
+  // Personalkosten: Überstunden-, Nacht- und Wochenendkosten (Grundlage für die Personalkosten-Kennzahl im Dashboard).
   computeCosts(){
     const monthStart=new Date(new Date().getFullYear(),new Date().getMonth(),1);
     const monthEnd=new Date(new Date().getFullYear(),new Date().getMonth()+1,0);
@@ -1315,7 +1313,7 @@ function doLogin(){
 function doLogout(){CU=null;hide('app-screen');$('login-screen').classList.remove('hidden')}
 function toggleSidebar(){const sb=$('sidebar');sb.classList.toggle('open');$('sidebar-overlay').style.display=sb.classList.contains('open')?'block':'none'}
 
-const VT={'dashboard':'Dashboard','schedule':'Dienstplan','ai':'KI-Assistent','violations':'Verstöße','swap':'Schichttausch','employees':'Mitarbeiter','absences':'Abwesenheiten','workhours':'Arbeitszeitkonto','wishes':'Wünsche','risk':'Personalrisiko','costs':'Kostenanalyse','settings':'Einstellungen','audit':'Audit-Log'};
+const VT={'dashboard':'Dashboard','schedule':'Dienstplan','ai':'KI-Assistent','violations':'Verstöße','swap':'Schichttausch','employees':'Mitarbeiter','absences':'Abwesenheiten','workhours':'Arbeitszeitkonto','wishes':'Wünsche','risk':'Personalrisiko','settings':'Einstellungen','audit':'Audit-Log'};
 function navigate(v){
   $$('.view').forEach(el=>el.classList.remove('active'));
   $$('.nav-item').forEach(el=>el.classList.remove('active'));
@@ -1332,7 +1330,6 @@ function navigate(v){
   if(v==='workhours')renderWH();
   if(v==='wishes')renderWishes();
   if(v==='risk')renderRisk();
-  if(v==='costs')renderCosts();
   if(v==='settings')renderSettings('facility');
   if(v==='audit')renderAudit();
   updViolBadge();
@@ -1345,13 +1342,58 @@ function updViolBadge(){
   else{b.style.display='none';tb.classList.add('hidden')}
 }
 
-function changeWeek(n){weekStart.setDate(weekStart.getDate()+n*7);renderSched()}
-function goToday(){weekStart=wkStart(new Date());renderSched()}
+function changeMonth(n){
+  schedMonth=new Date(schedMonth.getFullYear(),schedMonth.getMonth()+n,1);
+  if($('view-schedule').classList.contains('active'))renderSched();
+  if($('view-risk').classList.contains('active'))renderRisk();
+}
+function goToday(){
+  schedMonth=monthStart(new Date());
+  if($('view-schedule').classList.contains('active'))renderSched();
+  if($('view-risk').classList.contains('active'))renderRisk();
+}
+
+// Baut Kopf- und Körperzeilen einer Dienstplan-Tabelle für beliebige Tage/Mitarbeiter.
+// Wird sowohl vom Dienstplan (alle Mitarbeiter) als auch von der Personalrisiko-Stationsansicht
+// (nur Mitarbeiter der jeweiligen Station) verwendet, inkl. Personalzähler- und Stunden-Spalte.
+function buildSchedTable(days,employees){
+  const td=tod();
+  let thead='<tr><th>Mitarbeiter</th>';
+  days.forEach(d=>{const x=ds(d);thead+=`<th class="${x===td?'th-today':''}"><span class="th-dow">${d.toLocaleDateString('de-DE',{weekday:'short'})}</span><span class="th-date">${fmt(d)}</span></th>`});
+  thead+='<th>Std.</th></tr>';
+  let tbody='',grandTotal=0;
+  employees.forEach(emp=>{
+    const col=eCol(emp);let empTotal=0;
+    let row=`<tr class="sched-row"><td class="row-emp"><div style="display:flex;align-items:center;gap:6px"><div style="width:24px;height:24px;border-radius:50%;background:${col};color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${eInit(emp)}</div><div class="emp-row-name">${emp.firstname}<br>${emp.lastname}</div></div></td>`;
+    days.forEach(d=>{
+      const x=ds(d);
+      const dS=SHIFTS.filter(s=>s.empId===emp.id&&s.date===x);
+      const ab=ABSENCES.find(a=>a.empId===emp.id&&a.from<=x&&a.to>=x);
+      row+=`<td class="shift-cell" style="${x===td?'background:#fafbff':''}">`;
+      if(ab){const a=AT[ab.type];row+=`<div class="absence-chip">${a?.icon} ${a?.label}</div>`}
+      else{
+        dS.forEach(s=>{const st=ST[s.type];empTotal+=st.h||0;row+=`<div class="shift-chip" style="background:${st.bg};color:${st.color}"><span class="chip-lbl">${st.label}</span><span class="chip-time">${st.start}–${st.end}</span><button class="chip-del" onclick="delShift('${s.id}')" style="color:${st.color}">✕</button>${s.ai?`<span style="font-size:8px;position:absolute;bottom:2px;right:3px;opacity:.5;color:${st.color}">KI</span>`:''}</div>`});
+        if(!ab&&(CU?.role!=='employee'||CU?.empId===emp.id))row+=`<button class="add-btn" onclick="openShiftModal('${emp.id}','${x}')">+</button>`;
+      }
+      row+='</td>';
+    });
+    grandTotal+=empTotal;
+    row+=`<td class="mono" style="text-align:center;font-weight:600;background:var(--bg)">${empTotal}h</td></tr>`;
+    tbody+=row;
+  });
+  const empIds=employees.map(e=>e.id);
+  let footer='<tr class="sched-row"><td class="row-emp" style="font-weight:700">Personal/Tag</td>';
+  days.forEach(d=>{const x=ds(d);const count=SHIFTS.filter(s=>empIds.includes(s.empId)&&s.date===x).length;footer+=`<td class="shift-cell" style="text-align:center;font-weight:700;color:var(--blue-dark)">${count||'–'}</td>`});
+  footer+=`<td class="mono" style="text-align:center;font-weight:700;background:var(--bg)">${grandTotal}h</td></tr>`;
+  tbody+=footer;
+  return{thead,tbody};
+}
 
 function renderSched(){
-  const days=wkDays(weekStart);const kw=isoWk(weekStart);const td=tod();
-  $('sched-subtitle').textContent=`KW ${kw} · ${fmt(days[0])} – ${fmt(days[6])}`;
-  $('week-label-top').textContent=`KW ${kw}`;
+  const days=monthDays(schedMonth);
+  const monthLabel=schedMonth.toLocaleDateString('de-DE',{month:'long',year:'numeric'});
+  $('sched-subtitle').textContent=monthLabel;
+  $('month-label-top').textContent=monthLabel;
   const ws=SHIFTS.filter(s=>days.some(d=>ds(d)===s.date));
   const vs=getViols();const wa=ABSENCES.filter(a=>days.some(d=>ds(d)>=a.from&&ds(d)<=a.to));
   $('sched-stats').innerHTML=`
@@ -1359,28 +1401,9 @@ function renderSched(){
     <div class="stat-card red"><div class="stat-val">${vs.filter(v=>v.severity==='critical').length}</div><div class="stat-lbl">Krit. Verstöße</div></div>
     <div class="stat-card amber"><div class="stat-val">${wa.length}</div><div class="stat-lbl">Abwesenheiten</div></div>
     <div class="stat-card green"><div class="stat-val">${EMPS.length}</div><div class="stat-lbl">Mitarbeiter</div></div>`;
-  let th='<tr><th>Mitarbeiter</th>';
-  days.forEach(d=>{const x=ds(d);th+=`<th class="${x===td?'th-today':''}"><span class="th-dow">${d.toLocaleDateString('de-DE',{weekday:'short'})}</span><span class="th-date">${fmt(d)}</span></th>`});
-  th+='</tr>';$('sched-thead').innerHTML=th;
-  let tb='';
-  EMPS.forEach(emp=>{
-    const col=eCol(emp);
-    tb+=`<tr class="sched-row"><td class="row-emp"><div style="display:flex;align-items:center;gap:6px"><div style="width:24px;height:24px;border-radius:50%;background:${col};color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${eInit(emp)}</div><div class="emp-row-name">${emp.firstname}<br>${emp.lastname}</div></div></td>`;
-    days.forEach(d=>{
-      const x=ds(d);
-      const dS=SHIFTS.filter(s=>s.empId===emp.id&&s.date===x);
-      const ab=ABSENCES.find(a=>a.empId===emp.id&&a.from<=x&&a.to>=x);
-      tb+=`<td class="shift-cell" style="${x===td?'background:#fafbff':''}">`;
-      if(ab){const a=AT[ab.type];tb+=`<div class="absence-chip">${a?.icon} ${a?.label}</div>`}
-      else{
-        dS.forEach(s=>{const st=ST[s.type];tb+=`<div class="shift-chip" style="background:${st.bg};color:${st.color}"><span class="chip-lbl">${st.label}</span><span class="chip-time">${st.start}–${st.end}</span><button class="chip-del" onclick="delShift('${s.id}')" style="color:${st.color}">✕</button>${s.ai?`<span style="font-size:8px;position:absolute;bottom:2px;right:3px;opacity:.5;color:${st.color}">KI</span>`:''}</div>`});
-        if(!ab&&(CU?.role!=='employee'||CU?.empId===emp.id))tb+=`<button class="add-btn" onclick="openShiftModal('${emp.id}','${x}')">+</button>`;
-      }
-      tb+='</td>';
-    });
-    tb+='</tr>';
-  });
-  $('sched-tbody').innerHTML=tb;
+  const{thead,tbody}=buildSchedTable(days,EMPS);
+  $('sched-thead').innerHTML=thead;
+  $('sched-tbody').innerHTML=tbody;
 }
 
 function openShiftModal(empId='',date=''){
@@ -1432,8 +1455,19 @@ function renderEmps(){
     return `<div class="emp-card"><div class="emp-card-hdr"><div class="emp-big-av" style="background:${col}">${eInit(emp)}</div><div><div class="emp-fullname">${eName(emp)}</div><div class="emp-title">${RL[emp.role]} · ${emp.weeklyHours}h/W</div></div></div>
       <div class="emp-tags">${emp.qualifications.slice(0,3).map(q=>`<span class="tag tag-blue">${q}</span>`).join('')}${emp.qualifications.length>3?`<span class="tag">+${emp.qualifications.length-3}</span>`:''}</div>
       <div style="margin-top:8px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:3px"><span>Stunden (Monat)</span><span class="mono">${act}h/${tgt}h</span></div><div class="wh-bar-wrap"><div class="wh-bar" style="width:${pct}%;background:${bc}"></div></div></div>
-      <div class="emp-card-footer"><span style="font-size:11px;color:var(--muted)">${emp.email}</span>${CU?.role!=='employee'?`<button class="btn btn-ghost btn-sm" onclick="openEmpModal('${emp.id}')">Bearbeiten</button>`:''}</div></div>`;
+      <div class="emp-card-footer"><span style="font-size:11px;color:var(--muted)">${emp.email}</span>${CU?.role!=='employee'?`<span style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="openEmpModal('${emp.id}')">Bearbeiten</button><button class="btn btn-ghost btn-sm btn-icon" onclick="delEmployee('${emp.id}')" title="Mitarbeiter löschen">🗑</button></span>`:''}</div></div>`;
   }).join('');
+}
+function delEmployee(id){
+  const emp=eById(id);if(!emp)return;
+  if(!confirm(`${eName(emp)} wirklich löschen? Zugehörige Dienste, Abwesenheiten und Fortbildungen werden ebenfalls entfernt.`))return;
+  EMPS=EMPS.filter(e=>e.id!==id);
+  SHIFTS=SHIFTS.filter(s=>s.empId!==id);
+  ABSENCES=ABSENCES.filter(a=>a.empId!==id);
+  TRAININGS=TRAININGS.filter(t=>t.empId!==id);
+  addAudit(`Mitarbeiter gelöscht: ${eName(emp)}`);
+  renderEmps();updViolBadge();updRiskBadge();
+  toast('Mitarbeiter gelöscht','info');
 }
 let efWishFree=[];
 function openEmpModal(id=''){
@@ -1530,37 +1564,33 @@ function renderWishes(){
   }).join('');
 }
 
-// ── PERSONALRISIKO (AMPEL) ──
+// ── PERSONALRISIKO (AMPEL + DIENSTPLAN JE STATION) ──
 function renderRisk(){
   const risk=AIService.computeRisk();
-  $('risk-rows').innerHTML=risk.departments.map(d=>`
-    <div class="risk-row">
-      <div class="risk-light ${d.level}"></div>
-      <div><div class="risk-dept">${d.department}</div><div class="risk-label">${d.label}</div></div>
-      <div class="risk-meta">${d.headcount} Mitarbeiter · ${d.overtimeHours}h Überstunden${d.sickToday?' · '+d.sickToday+' krank heute':''}</div>
-    </div>`).join('');
+  $('risk-month-label').textContent=schedMonth.toLocaleDateString('de-DE',{month:'long',year:'numeric'});
   $('risk-forecast').textContent=risk.forecastText;
+  const days=monthDays(schedMonth);
+  $('risk-stations').innerHTML=risk.departments.map(d=>{
+    const stationEmps=EMPS.filter(e=>e.department===d.department);
+    const table=stationEmps.length===0?'<p style="font-size:12px;color:var(--muted)">Keine Mitarbeiter dieser Station zugeordnet.</p>':(()=>{
+      const{thead,tbody}=buildSchedTable(days,stationEmps);
+      return`<div class="sched-wrap"><div class="sched-scroll"><table class="sched-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div></div>`;
+    })();
+    return`<div class="card" style="margin-bottom:16px">
+      <div class="risk-row" style="border:none;padding:0;margin-bottom:14px;background:transparent">
+        <div class="risk-light ${d.level}"></div>
+        <div><div class="risk-dept">${d.department}</div><div class="risk-label">${d.label}</div></div>
+        <div class="risk-meta">${d.headcount} Mitarbeiter · ${d.overtimeHours}h Überstunden${d.sickToday?' · '+d.sickToday+' krank heute':''}</div>
+      </div>
+      ${table}
+    </div>`;
+  }).join('');
   updRiskBadge();
-}
-
-// ── KOSTENANALYSE ──
-function renderCosts(){
-  const c=AIService.computeCosts();
-  const eur=n=>'€ '+n.toLocaleString('de-DE');
-  const tiles=[
-    {val:c.overtimeHours+'h',lbl:'Überstunden (Woche)',sub:eur(c.overtimeCost)},
-    {val:eur(c.nightCost),lbl:'Nachtzuschläge (Monat)',sub:c.nightHours+'h Nachtdienst'},
-    {val:eur(c.weekendCost),lbl:'Wochenendzuschläge (Monat)',sub:c.weekendHours+'h am Wochenende'},
-    {val:eur(c.estimatedTotal),lbl:'Geschätzte Personalkosten (Monat)',sub:'inkl. Zuschläge'},
-  ];
-  $('cost-grid').innerHTML=tiles.map(t=>`<div class="cost-tile"><div class="cost-val">${t.val}</div><div class="cost-lbl">${t.lbl}</div><div style="font-size:10.5px;color:var(--subtle);margin-top:2px">${t.sub}</div></div>`).join('');
-  $('cost-savings-num').textContent=c.savableHours+'h';
-  $('cost-savings-txt').textContent=c.savableHours>0?`Durch bessere Verteilung können diesen Monat rund ${c.savableHours} Überstunden (≈ ${eur(c.savingsPotential)}) vermieden werden.`:'Aktuell besteht kein nennenswertes Einsparpotenzial durch Umverteilung.';
 }
 
 // ── SCHICHTTAUSCH ──
 function swapOptions(){
-  const days=[...wkDays(weekStart),...wkDays(wkStart(addDays(weekStart,7)))].map(ds);
+  const days=monthDays(schedMonth).map(ds);
   return SHIFTS.filter(s=>days.includes(s.date)).sort((a,b)=>a.date.localeCompare(b.date))
     .map(s=>`<option value="${s.id}">${eName(eById(s.empId))} – ${fmtL(s.date)} ${ST[s.type].label}</option>`).join('');
 }
@@ -1638,9 +1668,9 @@ function updRiskBadge(){
 
 // ── KI-DIENSTPLAN-ANALYSE ──
 function openAnalysisModal(){
-  const days=wkDays(weekStart);
+  const days=monthDays(schedMonth);
   const report=AIService.analyzeSchedule(SHIFTS.filter(s=>days.map(ds).includes(s.date)),days);
-  $('an-week').textContent=isoWk(weekStart);
+  $('an-month').textContent=schedMonth.toLocaleDateString('de-DE',{month:'long',year:'numeric'});
   $('an-report-hdr').innerHTML=report.ok?
     `<div class="report-hdr ok"><span style="font-size:22px">✅</span><div><strong>Dienstplan geprüft</strong><div style="font-size:12px;color:var(--muted)">Keine Verstöße gefunden – bereit zur Veröffentlichung.</div></div></div>`:
     `<div class="report-hdr warn"><span style="font-size:22px">⚠️</span><div><strong>${report.critical} kritische Warnung${report.critical!==1?'en':''}, ${report.warnings} Hinweis${report.warnings!==1?'e':''}</strong><div style="font-size:12px;color:var(--muted)">Bitte vor Veröffentlichung prüfen.</div></div></div>`;
@@ -1649,9 +1679,10 @@ function openAnalysisModal(){
   show('analysis-modal');
 }
 function publishSchedule(){
-  const report=AIService.analyzeSchedule(SHIFTS,wkDays(weekStart));
+  const monthLabel=schedMonth.toLocaleDateString('de-DE',{month:'long',year:'numeric'});
+  const report=AIService.analyzeSchedule(SHIFTS,monthDays(schedMonth));
   closeModal('analysis-modal');
-  addAudit(`Dienstplan KW${isoWk(weekStart)} veröffentlicht (${report.ok?'ohne Warnungen':report.critical+' kritisch, '+report.warnings+' Hinweise'})`);
+  addAudit(`Dienstplan ${monthLabel} veröffentlicht (${report.ok?'ohne Warnungen':report.critical+' kritisch, '+report.warnings+' Hinweise'})`);
   toast(report.ok?'Dienstplan veröffentlicht':'Dienstplan veröffentlicht — bitte Warnungen im Blick behalten','info');
 }
 
