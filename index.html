@@ -328,6 +328,67 @@ input:focus,select:focus{border-color:var(--blue)}
   border:8px solid transparent;border-top-color:#e5e5ea;border-bottom:0;border-left:0;
 }
 .sms-label{font-size:10px;color:var(--muted);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+
+/* ── PFLEGEPILOT & KI-ERWEITERUNGEN ── */
+.pilot-card{background:linear-gradient(135deg,var(--navy),#26264a);border-radius:var(--radius);padding:20px 22px;color:#fff;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;margin-bottom:20px}
+.pilot-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 85% 0%,rgba(79,156,249,.22),transparent 55%)}
+.pilot-hdr{display:flex;align-items:center;gap:10px;position:relative;z-index:1;margin-bottom:12px}
+.pilot-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.pilot-hdr h2{font-size:16px;font-weight:700}
+.pilot-hdr span{font-size:11px;color:#94a3b8}
+.pilot-lines{position:relative;z-index:1;display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.pilot-lines p{font-size:13.5px;line-height:1.6;color:#e2e8f0}
+.pilot-actions{position:relative;z-index:1;display:flex;gap:8px;flex-wrap:wrap}
+.pilot-actions .btn-ghost{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:#fff}
+.pilot-actions .btn-ghost:hover{background:rgba(255,255,255,.16)}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+.dash-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);cursor:pointer;transition:all var(--trans)}
+.dash-tile:hover{border-color:var(--blue);transform:translateY(-1px)}
+.dash-tile-icon{font-size:18px;margin-bottom:6px}
+.dash-tile-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;line-height:1}
+.dash-tile-lbl{font-size:11px;color:var(--muted);margin-top:4px}
+.dash-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.risk-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);margin-bottom:10px}
+.risk-light{width:16px;height:16px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 4px}
+.risk-light.green{background:var(--green);box-shadow:0 0 0 4px var(--green-bg)}
+.risk-light.amber{background:var(--amber);box-shadow:0 0 0 4px var(--amber-bg)}
+.risk-light.red{background:var(--red);box-shadow:0 0 0 4px var(--red-bg)}
+.risk-dept{font-size:13.5px;font-weight:600}
+.risk-label{font-size:11.5px;color:var(--muted);margin-top:1px}
+.risk-meta{margin-left:auto;text-align:right;font-size:11px;color:var(--muted)}
+.forecast-box{display:flex;align-items:flex-start;gap:10px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius);padding:14px 16px;margin-top:4px}
+.cost-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.cost-tile{border-radius:var(--radius);padding:16px;border:1px solid var(--border);background:var(--surface)}
+.cost-tile .cost-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700}
+.cost-tile .cost-lbl{font-size:11px;color:var(--muted);margin-top:4px}
+.savings-box{background:var(--green-bg);border:1px solid #86efac;border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:14px}
+.savings-box .sv-num{font-size:26px;font-weight:700;color:#065f46;font-family:'JetBrains Mono',monospace}
+.chat-ask-row{display:flex;gap:8px;margin-top:10px}
+.chat-ask-row input{flex:1}
+.chat-suggest{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chat-suggest button{background:var(--blue-light);border:1px solid #93c5fd;color:#1e40af;border-radius:100px;padding:4px 12px;font-size:11.5px;cursor:pointer;transition:all var(--trans)}
+.chat-suggest button:hover{background:#bfdbfe}
+.report-hdr{display:flex;align-items:center;gap:10px;padding:16px 20px;border-radius:var(--radius) var(--radius) 0 0}
+.report-hdr.ok{background:var(--green-bg)}.report-hdr.warn{background:var(--amber-bg)}
+.report-issue{display:flex;gap:10px;padding:12px 14px;border-radius:var(--rad-sm);border:1px solid var(--border);margin-bottom:8px}
+.report-issue.critical{background:var(--red-bg);border-color:#fecaca}
+.report-issue.warning{background:var(--amber-bg);border-color:#fde68a}
+.report-issue-cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:2px}
+.report-issue-sug{font-size:11.5px;color:var(--muted);margin-top:4px;display:flex;gap:5px}
+.explain-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--rad-sm);padding:10px 12px;margin-top:8px}
+.explain-box ul{list-style:none;display:flex;flex-direction:column;gap:3px;margin-top:4px}
+.explain-box li{font-size:12px}
+.wish-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.wish-row:last-child{border-bottom:none}
+.wish-tag{background:var(--bg);border:1px solid var(--border);border-radius:100px;padding:3px 10px;font-size:11px;color:var(--muted)}
+.wish-tag.on{background:var(--blue-light);border-color:#93c5fd;color:#1e40af;font-weight:600}
+.swap-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+.swap-parties{display:flex;align-items:center;gap:10px;font-size:13px}
+.swap-arrow{color:var(--muted);font-size:16px}
+.swap-verdict{margin-top:10px;padding:10px 12px;border-radius:var(--rad-sm);font-size:12.5px;font-weight:500}
+.swap-verdict.allowed{background:var(--green-bg);color:#065f46}
+.swap-verdict.denied{background:var(--red-bg);color:#991b1b}
+
 @media(max-width:900px){
   .login-split{grid-template-columns:1fr}.login-hero{display:none}
   .app{padding-top:50px}.sidebar{transform:translateX(-100%)}.sidebar.open{transform:none}
@@ -335,6 +396,7 @@ input:focus,select:focus{border-color:var(--blue)}
   .ai-layout{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}
   .field-row{grid-template-columns:1fr}.v-summary{grid-template-columns:1fr}
   .settings-layout{grid-template-columns:1fr}
+  .dash-cols{grid-template-columns:1fr}.dash-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:600px){.content{padding:16px}.ph h1{font-size:20px}}
 </style>
@@ -397,7 +459,10 @@ input:focus,select:focus{border-color:var(--blue)}
       </div>
       <div class="nav-section">
         <span class="nav-lbl">Planung</span>
-        <button class="nav-item active" onclick="navigate('schedule')">
+        <button class="nav-item active" onclick="navigate('dashboard')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Dashboard
+        </button>
+        <button class="nav-item" onclick="navigate('schedule')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Dienstplan
         </button>
         <button class="nav-item" onclick="navigate('ai')">
@@ -407,6 +472,9 @@ input:focus,select:focus{border-color:var(--blue)}
         <button class="nav-item" onclick="navigate('violations')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Verstöße
           <span class="nav-badge" id="viol-badge" style="display:none">0</span>
+        </button>
+        <button class="nav-item" onclick="navigate('swap')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Schichttausch
         </button>
       </div>
       <div class="nav-section">
@@ -420,8 +488,21 @@ input:focus,select:focus{border-color:var(--blue)}
         <button class="nav-item" onclick="navigate('workhours')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Arbeitszeitkonto
         </button>
+        <button class="nav-item" onclick="navigate('wishes')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Wünsche
+        </button>
       </div>
-      <div class="nav-section" id="admin-nav" style="display:none">
+      <div class="nav-section">
+        <span class="nav-lbl">Analyse</span>
+        <button class="nav-item" onclick="navigate('risk')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>Personalrisiko
+          <span class="nav-badge" id="risk-badge" style="display:none;background:var(--amber)">!</span>
+        </button>
+        <button class="nav-item" onclick="navigate('costs')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Kostenanalyse
+        </button>
+      </div>
+      <div class="nav-section hidden" id="admin-nav">
         <span class="nav-lbl">Verwaltung</span>
         <button class="nav-item" onclick="navigate('settings')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2"/></svg>Einstellungen
@@ -459,8 +540,36 @@ input:focus,select:focus{border-color:var(--blue)}
       </div>
       <div class="content">
 
+        <!-- DASHBOARD (PFLEGEPILOT) -->
+        <div id="view-dashboard" class="view active">
+          <div class="ph"><div><h1>Dashboard</h1><p>Ihr Morgen-Überblick – automatisch von Pflegepilot zusammengestellt</p></div></div>
+          <div class="pilot-card">
+            <div class="pilot-hdr">
+              <div class="pilot-avatar">🧭</div>
+              <div><h2 id="pilot-greeting">Guten Morgen.</h2><span>Pflegepilot · Ihr KI-Kollege für die Dienstplanung</span></div>
+            </div>
+            <div class="pilot-lines" id="pilot-lines"></div>
+            <div class="pilot-actions">
+              <button class="btn btn-ghost btn-sm" onclick="navigate('ai')">💬 Mit Pflegepilot sprechen</button>
+              <button class="btn btn-ghost btn-sm" onclick="navigate('risk')">🚦 Personalrisiko ansehen</button>
+              <button class="btn btn-ghost btn-sm" onclick="navigate('schedule')">📋 Zum Dienstplan</button>
+            </div>
+          </div>
+          <div class="dash-grid" id="dash-grid"></div>
+          <div class="dash-cols">
+            <div class="card">
+              <div class="card-title">Warnungen</div>
+              <div id="dash-warnings"></div>
+            </div>
+            <div class="card">
+              <div class="card-title">Vorschläge von Pflegepilot</div>
+              <div id="dash-suggestions"></div>
+            </div>
+          </div>
+        </div>
+
         <!-- DIENSTPLAN -->
-        <div id="view-schedule" class="view active">
+        <div id="view-schedule" class="view">
           <div class="ph">
             <div><h1>Dienstplan</h1><p id="sched-subtitle"></p></div>
             <div class="ph-actions">
@@ -470,6 +579,7 @@ input:focus,select:focus{border-color:var(--blue)}
                 <button class="btn btn-ghost btn-sm" onclick="changeWeek(1)">›</button>
                 <button class="btn btn-ghost btn-sm" onclick="goToday()">Heute</button>
               </div>
+              <button class="btn btn-ghost btn-sm" onclick="openAnalysisModal()">🛡️ Prüfen &amp; Veröffentlichen</button>
               <button class="btn btn-primary btn-sm" onclick="openShiftModal()">+ Dienst</button>
             </div>
           </div>
@@ -511,8 +621,11 @@ input:focus,select:focus{border-color:var(--blue)}
                 <button class="btn btn-ai btn-full" onclick="runAI()">▶ KI-Plan erstellen</button>
               </div>
               <div class="card">
-                <div class="card-title">Einspringer-Suche</div>
-                <div class="field"><label>Datum</label><input type="date" id="sub-date"></div>
+                <div class="card-title">Intelligenter Einspringer</div>
+                <div class="field-row">
+                  <div class="field"><label>Datum</label><input type="date" id="sub-date"></div>
+                  <div class="field"><label>Schicht</label><select id="sub-type"><option value="early">Früh</option><option value="late">Spät</option><option value="night">Nacht</option></select></div>
+                </div>
                 <div class="field"><label>Qualifikation</label>
                   <select id="sub-qual">
                     <option value="">Alle</option>
@@ -524,11 +637,26 @@ input:focus,select:focus{border-color:var(--blue)}
                 <button class="btn btn-ghost btn-full" onclick="findSub()">🔍 Einspringer finden</button>
                 <div id="sub-results" style="margin-top:10px"></div>
               </div>
+              <div class="card">
+                <div class="card-title">Dienstplan-Analyse</div>
+                <p style="font-size:12px;color:var(--muted);margin-bottom:10px">Prüft den aktuellen Dienstplan vor der Veröffentlichung gegen ArbZG, Ruhezeiten, Qualifikation, Mindestbesetzung, Urlaub, Krankmeldungen und Überstunden.</p>
+                <button class="btn btn-ghost btn-full" onclick="openAnalysisModal()">🛡️ Jetzt prüfen</button>
+              </div>
             </div>
             <div>
               <div class="card" style="margin-bottom:12px">
                 <div class="card-title">KI-Kommunikation</div>
                 <div class="ai-chat" id="ai-chat"></div>
+                <div class="chat-ask-row">
+                  <input type="text" id="chat-input" placeholder="Frage an Pflegepilot stellen…" onkeydown="if(event.key==='Enter')sendChat()">
+                  <button class="btn btn-primary btn-sm" onclick="sendChat()">Senden</button>
+                </div>
+                <div class="chat-suggest">
+                  <button onclick="sendChat('Wer kann morgen Frühdienst übernehmen?')">Wer kann morgen Frühdienst übernehmen?</button>
+                  <button onclick="sendChat('Warum fehlen mir nächste Woche Mitarbeiter?')">Warum fehlen nächste Woche Mitarbeiter?</button>
+                  <button onclick="sendChat('Wie viele Überstunden hat Anna?')">Wie viele Überstunden hat Anna?</button>
+                  <button onclick="sendChat('Wer hat diese Woche noch Stunden offen?')">Wer hat noch Stunden offen?</button>
+                </div>
               </div>
               <div id="ai-result-panel" class="hidden"></div>
             </div>
@@ -549,6 +677,20 @@ input:focus,select:focus{border-color:var(--blue)}
             <button class="btn btn-ghost btn-sm" onclick="filterViols('warning')">Warnung</button>
           </div>
           <div class="v-list" id="v-list"></div>
+        </div>
+
+        <!-- SCHICHTTAUSCH -->
+        <div id="view-swap" class="view">
+          <div class="ph"><div><h1>Schichttausch</h1><p>Mitarbeiter tauschen Dienste – die KI prüft automatisch ArbZG, Qualifikation, Ruhezeiten &amp; Vertragsstunden</p></div></div>
+          <div class="card" style="margin-bottom:16px">
+            <div class="card-title">Neuen Tausch vorschlagen</div>
+            <div class="field-row">
+              <div class="field"><label>Schicht von Mitarbeiter A</label><select id="swap-a"></select></div>
+              <div class="field"><label>Schicht von Mitarbeiter B</label><select id="swap-b"></select></div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="proposeSwap()">🔁 Tausch von KI prüfen lassen</button>
+          </div>
+          <div id="swap-list"></div>
         </div>
 
         <!-- MITARBEITER -->
@@ -577,9 +719,35 @@ input:focus,select:focus{border-color:var(--blue)}
         <!-- ARBEITSZEITKONTO -->
         <div id="view-workhours" class="view">
           <div class="ph"><div><h1>Arbeitszeitkonto</h1><p>Soll/Ist-Vergleich & Überstunden</p></div>
-            <div class="ph-actions"><select id="wh-emp-sel" onchange="renderWorkhours()" style="border:1px solid var(--border);border-radius:var(--rad-sm);padding:6px 10px;font-size:13px"></select></div>
+            <div class="ph-actions"><select id="wh-emp-sel" onchange="renderWH()" style="border:1px solid var(--border);border-radius:var(--rad-sm);padding:6px 10px;font-size:13px"></select></div>
           </div>
           <div id="wh-content"></div>
+        </div>
+
+        <!-- MITARBEITERWÜNSCHE -->
+        <div id="view-wishes" class="view">
+          <div class="ph"><div><h1>Wünsche</h1><p>Individuelle Dienstwünsche – werden von der KI bei Planung &amp; Einspringer-Suche berücksichtigt</p></div></div>
+          <div class="card"><div id="wishes-list"></div></div>
+        </div>
+
+        <!-- PERSONALRISIKO -->
+        <div id="view-risk" class="view">
+          <div class="ph"><div><h1>Personalrisiko</h1><p>Ampelsystem je Wohnbereich · simulierte Prognose</p></div></div>
+          <div id="risk-rows"></div>
+          <div class="card" style="margin-top:16px">
+            <div class="card-title">Prognose</div>
+            <div class="forecast-box"><span style="font-size:20px">🔮</span><div><div id="risk-forecast" style="font-size:13.5px"></div><div style="font-size:11px;color:var(--muted);margin-top:4px">Basierend auf geplantem Urlaub examinierter Pflegekräfte in den nächsten 4 Wochen (simulierte Daten).</div></div></div>
+          </div>
+        </div>
+
+        <!-- KOSTENANALYSE -->
+        <div id="view-costs" class="view">
+          <div class="ph"><div><h1>Kostenanalyse</h1><p>Live-Personalkosten &amp; Einsparpotenzial (simulierte Sätze)</p></div></div>
+          <div class="cost-grid" id="cost-grid"></div>
+          <div class="savings-box">
+            <span style="font-size:26px">💰</span>
+            <div><div class="sv-num" id="cost-savings-num">0h</div><div id="cost-savings-txt" style="font-size:13px;color:#065f46"></div></div>
+          </div>
         </div>
 
         <!-- EINSTELLUNGEN -->
@@ -647,6 +815,7 @@ input:focus,select:focus{border-color:var(--blue)}
         <button class="form-tab active" onclick="showEmpTab('base',this)">Stammdaten</button>
         <button class="form-tab" onclick="showEmpTab('work',this)">Arbeitszeit</button>
         <button class="form-tab" onclick="showEmpTab('qualif',this)">Qualifikationen</button>
+        <button class="form-tab" onclick="showEmpTab('wishes',this)">Wünsche</button>
       </div>
       <div id="emp-tab-base" class="tab-pane active">
         <div class="field-row"><div class="field"><label>Vorname *</label><input type="text" id="ef-first"></div><div class="field"><label>Nachname *</label><input type="text" id="ef-last"></div></div>
@@ -674,6 +843,17 @@ input:focus,select:focus{border-color:var(--blue)}
         </div>
       </div>
       <div id="emp-tab-qualif" class="tab-pane"><div class="qualif-list" id="qualif-list"></div></div>
+      <div id="emp-tab-wishes" class="tab-pane">
+        <div class="field-row">
+          <div class="field"><label>Bevorzugte Schicht</label><select id="ef-pref-shift"><option value="">Keine Präferenz</option><option value="early">Früh</option><option value="late">Spät</option><option value="night">Nacht</option></select></div>
+          <div class="field"><label>Max. Wochenenden/Monat</label><input type="number" id="ef-max-weekends" min="0" max="8" placeholder="Kein Limit"></div>
+        </div>
+        <div class="field"><label class="check-item"><input type="checkbox" id="ef-no-night"> Keine Nachtdienste gewünscht</label></div>
+        <div class="field"><label>Wunschfreie Tage</label>
+          <div style="display:flex;gap:6px"><input type="date" id="ef-wishfree-add" style="flex:1"><button type="button" class="btn btn-ghost btn-sm" onclick="addWishFreeDay()">+ Hinzufügen</button></div>
+          <div class="emp-tags" id="ef-wishfree-list" style="margin-top:8px"></div>
+        </div>
+      </div>
     </div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('emp-modal')">Abbrechen</button><button class="btn btn-primary" onclick="saveEmployee()">Speichern</button></div>
   </div>
@@ -690,6 +870,19 @@ input:focus,select:focus{border-color:var(--blue)}
       <div class="field"><label>Bemerkung</label><input type="text" id="abf-note" placeholder="Optional"></div>
     </div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('abs-modal')">Abbrechen</button><button class="btn btn-primary" onclick="saveAbsence()">Speichern</button></div>
+  </div>
+</div>
+
+<!-- KI-DIENSTPLAN-ANALYSE MODAL -->
+<div class="modal-overlay hidden" id="analysis-modal" onclick="if(event.target===this)closeModal('analysis-modal')">
+  <div class="modal modal-lg">
+    <div class="modal-hdr"><h3>🛡️ KI-Dienstplan-Analyse — KW <span id="an-week"></span></h3><button class="btn btn-ghost btn-icon btn-sm" onclick="closeModal('analysis-modal')">✕</button></div>
+    <div id="an-report-hdr"></div>
+    <div class="modal-body" id="an-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('analysis-modal')">Schließen</button>
+      <button class="btn btn-primary" onclick="publishSchedule()">✓ Dienstplan veröffentlichen</button>
+    </div>
   </div>
 </div>
 
@@ -773,18 +966,67 @@ const AT={vacation:{label:'Urlaub',icon:'🏖️',color:'#10b981'},sick:{label:'
 const QUALS=['Pflegefachkraft','Pflegehilfskraft','Wundversorgung','Palliativpflege','Beatmungspflege','Demenzbetreuung','Ersthelfer','Hygienebeauftragter'];
 const RL={employee:'Mitarbeiter',team_lead:'Teamleitung',manager:'Leitung',admin:'Administrator'};
 const EC=['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444','#06b6d4','#6366f1','#ec4899','#14b8a6','#f43f5e'];
+// Wohnbereiche (Stationen) – Grundlage für Personalrisiko- und Kostenauswertung je Bereich
+const DEPARTMENTS=['Wohnbereich 1','Wohnbereich 2','Wohnbereich 3'];
+// Mindestbesetzung je Schichttyp und Tag – Basis für Lückenerkennung (Pflegepilot, Dienstplan-Analyse, Personalrisiko)
+const STAFFING_REQUIREMENTS={early:2,late:2,night:1};
 let EMPS=[
-  {id:'e1',firstname:'Anna',lastname:'Müller',role:'manager',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Palliativpflege','Ersthelfer'],shiftPrefs:['early','late'],unavailDays:[],vacationDays:30,email:'anna.mueller@pflege.de'},
-  {id:'e2',firstname:'Thomas',lastname:'Schmidt',role:'team_lead',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Wundversorgung'],shiftPrefs:['late','night'],unavailDays:[0],vacationDays:30,email:'t.schmidt@pflege.de'},
-  {id:'e3',firstname:'Sarah',lastname:'Weber',role:'employee',employment:'parttime',weeklyHours:25,qualifications:['Pflegehilfskraft','Ersthelfer'],shiftPrefs:['early'],unavailDays:[6,0],vacationDays:20,email:'s.weber@pflege.de'},
-  {id:'e4',firstname:'Michael',lastname:'Bauer',role:'employee',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Beatmungspflege','Demenzbetreuung'],shiftPrefs:['night','early'],unavailDays:[],vacationDays:30,email:'m.bauer@pflege.de'},
-  {id:'e5',firstname:'Lisa',lastname:'Hoffmann',role:'employee',employment:'parttime',weeklyHours:30,qualifications:['Pflegefachkraft','Hygienebeauftragter'],shiftPrefs:['early','late'],unavailDays:[1],vacationDays:25,email:'l.hoffmann@pflege.de'},
-  {id:'e6',firstname:'Klaus',lastname:'Fischer',role:'employee',employment:'fulltime',weeklyHours:40,qualifications:['Pflegehilfskraft','Demenzbetreuung'],shiftPrefs:['late','night'],unavailDays:[],vacationDays:30,email:'k.fischer@pflege.de'},
-  {id:'e7',firstname:'Marie',lastname:'Schneider',role:'employee',employment:'minijob',weeklyHours:15,qualifications:['Pflegehilfskraft'],shiftPrefs:['early'],unavailDays:[1,2,3],vacationDays:15,email:'m.schneider@pflege.de'},
+  {id:'e1',firstname:'Anna',lastname:'Müller',role:'manager',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Palliativpflege','Ersthelfer'],shiftPrefs:['early','late'],unavailDays:[],vacationDays:30,email:'anna.mueller@pflege.de',phone:'+49 151 1001 0001',department:'Wohnbereich 1',wishes:{preferShift:'early',noNight:false,maxWeekends:null,wishFreeDays:[]},lastSubDaysAgo:12},
+  {id:'e2',firstname:'Thomas',lastname:'Schmidt',role:'team_lead',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Wundversorgung'],shiftPrefs:['late','night'],unavailDays:[0],vacationDays:30,email:'t.schmidt@pflege.de',phone:'+49 151 1001 0002',department:'Wohnbereich 2',wishes:{preferShift:'late',noNight:false,maxWeekends:2,wishFreeDays:[]},lastSubDaysAgo:21},
+  {id:'e3',firstname:'Sarah',lastname:'Weber',role:'employee',employment:'parttime',weeklyHours:25,qualifications:['Pflegehilfskraft','Ersthelfer'],shiftPrefs:['early'],unavailDays:[6,0],vacationDays:20,email:'s.weber@pflege.de',phone:'+49 151 1001 0003',department:'Wohnbereich 1',wishes:{preferShift:'early',noNight:true,maxWeekends:1,wishFreeDays:[]},lastSubDaysAgo:8},
+  {id:'e4',firstname:'Michael',lastname:'Bauer',role:'employee',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Beatmungspflege','Demenzbetreuung'],shiftPrefs:['night','early'],unavailDays:[],vacationDays:30,email:'m.bauer@pflege.de',phone:'+49 151 1001 0004',department:'Wohnbereich 2',wishes:{preferShift:null,noNight:false,maxWeekends:null,wishFreeDays:[]},lastSubDaysAgo:29},
+  {id:'e5',firstname:'Lisa',lastname:'Hoffmann',role:'employee',employment:'parttime',weeklyHours:30,qualifications:['Pflegefachkraft','Hygienebeauftragter'],shiftPrefs:['early','late'],unavailDays:[1],vacationDays:25,email:'l.hoffmann@pflege.de',phone:'+49 151 1001 0005',department:'Wohnbereich 3',wishes:{preferShift:'early',noNight:true,maxWeekends:2,wishFreeDays:[]},lastSubDaysAgo:5},
+  {id:'e6',firstname:'Klaus',lastname:'Fischer',role:'employee',employment:'fulltime',weeklyHours:40,qualifications:['Pflegehilfskraft','Demenzbetreuung'],shiftPrefs:['late','night'],unavailDays:[],vacationDays:30,email:'k.fischer@pflege.de',phone:'+49 151 1001 0006',department:'Wohnbereich 2',wishes:{preferShift:null,noNight:false,maxWeekends:null,wishFreeDays:[]},lastSubDaysAgo:17},
+  {id:'e7',firstname:'Marie',lastname:'Schneider',role:'employee',employment:'minijob',weeklyHours:15,qualifications:['Pflegehilfskraft'],shiftPrefs:['early'],unavailDays:[1,2,3],vacationDays:15,email:'m.schneider@pflege.de',phone:'+49 151 1001 0007',department:'Wohnbereich 3',wishes:{preferShift:'early',noNight:true,maxWeekends:1,wishFreeDays:[]},lastSubDaysAgo:3},
 ];
 const USERS=[{id:'u1',empId:'e1',email:'anna.mueller@pflege.de',pw:'demo123',role:'manager'},{id:'u2',empId:'e2',email:'t.schmidt@pflege.de',pw:'demo123',role:'team_lead'},{id:'u3',empId:'e3',email:'s.weber@pflege.de',pw:'demo123',role:'employee'},{id:'adm',empId:null,email:'admin@pflege.de',pw:'admin123',role:'admin'}];
 let SHIFTS=[],ABSENCES=[{id:'a1',empId:'e3',type:'vacation',from:'2025-06-27',to:'2025-07-04',note:'Sommerurlaub'},{id:'a2',empId:'e7',type:'sick',from:'2025-06-26',to:'2025-06-26',note:''}];
 let AUDIT=[{id:1,time:'2025-06-26 09:12',action:'Dienstplan KW26 gespeichert',user:'Anna Müller'},{id:2,time:'2025-06-25 14:33',action:'Mitarbeiter aktualisiert',user:'Anna Müller'},{id:3,time:'2025-06-25 08:00',action:'Login',user:'Thomas Schmidt'}];
+// Fortbildungen (Qualifikationsnachweise) – Ablaufdaten werden beim Login relativ zu "heute" gesetzt, siehe seedDynamicDemoData()
+let TRAININGS=[
+  {id:'tr1',empId:'e2',name:'Wundversorgung Auffrischung',expires:null,expiresInDays:5},
+  {id:'tr2',empId:'e4',name:'Beatmungspflege Rezertifizierung',expires:null,expiresInDays:34},
+  {id:'tr3',empId:'e5',name:'Hygienebeauftragter Schulung',expires:null,expiresInDays:61},
+  {id:'tr4',empId:'e1',name:'Ersthelfer Auffrischung',expires:null,expiresInDays:88},
+];
+// Schichttausch-Anfragen zwischen Mitarbeitern (Demo-Daten, KI prüft jede Anfrage)
+let SWAPS=[];
+// Kosten-Konfiguration – Stundensätze & Zuschläge. Bis zur DATEV-Anbindung als Konstante gepflegt.
+const COST_CONFIG={
+  baseHourlyRate:19.5,          // Ø Stundensatz Pflegepersonal (EUR)
+  overtimeSurcharge:0.25,       // 25% Zuschlag auf Überstunden
+  nightSurcharge:0.20,          // 20% Nachtzuschlag (22–6 Uhr)
+  weekendSurcharge:0.15,        // 15% Wochenendzuschlag (Sa/So)
+};
+// ═══════════════════════════════════════════════════════════════════════
+// INTEGRATIONS-KONFIGURATION (Architektur-Vorbereitung)
+// ─────────────────────────────────────────────────────────────────────
+// Zentraler Schalter für alle externen Anbindungen. Heute sind alle Module
+// per "enabled:false" deaktiviert und laufen stattdessen über die lokale
+// Simulation in AIService (siehe unten) bzw. das bestehende SMS-Demo im
+// Dienstausfall-Alert. Eine spätere Anbindung ändert ausschließlich diese
+// Sektion sowie die mit "// INTEGRATION:" markierten Stellen im Code –
+// die UI- und Render-Funktionen bleiben unverändert.
+//
+//   openai   → ersetzt AIService.chatAnswer()/getMorningBriefing() durch
+//              echte Chat-Completion-Aufrufe (z.B. über eine serverseitige
+//              REST-Route, damit der API-Key nie im Frontend liegt)
+//   sms      → produktiv würde startSending() eine REST-Route ansprechen
+//              (z.B. Twilio/Sipgate), statt die Zustellung zu simulieren
+//   whatsapp → alternativer Versandkanal für den Dienstausfall-Alert
+//   datev    → Export der Arbeitszeit-/Kostendaten (Kostenanalyse-View)
+//   backend  → Node.js/Express REST-API vor einer PostgreSQL-Datenbank;
+//              ersetzt die aktuellen In-Memory-Arrays (EMPS, SHIFTS, …)
+//              1:1 durch fetch()-Aufrufe gegen die angegebene baseUrl
+// ═══════════════════════════════════════════════════════════════════════
+const Integrations={
+  openai:{enabled:false,model:'claude-sonnet-5',endpoint:'/api/ai/chat'},
+  sms:{enabled:false,provider:null,endpoint:'/api/notify/sms'},
+  whatsapp:{enabled:false,provider:null,endpoint:'/api/notify/whatsapp'},
+  datev:{enabled:false,endpoint:'/api/export/datev'},
+  backend:{enabled:false,baseUrl:null /* z.B. https://api.shiftmind.de */},
+};
+
 let CU=null,weekStart=wkStart(new Date()),absType='vacation',aiRes=null,vfilt='';
 function ds(d){return(d instanceof Date?d:new Date(d)).toISOString().split('T')[0]}
 function wkStart(d){const n=new Date(d);const day=n.getDay();n.setDate(n.getDate()-day+(day===0?-6:1));n.setHours(0,0,0,0);return n}
@@ -797,8 +1039,23 @@ function eInit(e){return e?`${e.firstname[0]}${e.lastname[0]}`:'?'}
 function eCol(e){return e?EC[EMPS.indexOf(e)%EC.length]:'#94a3b8'}
 function eById(id){return EMPS.find(e=>e.id===id)}
 function tod(){return ds(new Date())}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
 function $$(s){return document.querySelectorAll(s)}
 function $(i){return document.getElementById(i)}
+
+// Setzt relative Demo-Zeitstempel (Fortbildungs-Ablauf, letzter Einspringer-Einsatz) auf Basis des
+// tatsächlichen heutigen Datums, damit die Pflegepilot-Texte immer plausibel bleiben.
+function seedDynamicDemoData(){
+  const today=new Date();
+  TRAININGS.forEach(t=>{t.expires=ds(addDays(today,t.expiresInDays))});
+  EMPS.forEach(e=>{e.lastSubDate=ds(addDays(today,-(e.lastSubDaysAgo||10)))});
+  // Demo-Urlaub einer examinierten Pflegekraft in ~3 Wochen, damit die Personalrisiko-Prognose
+  // (AIService.computeRisk) direkt eine plausible Vorhersage zeigen kann.
+  const riskDemo=ABSENCES.find(a=>a.id==='a-risk-demo');
+  const from=ds(addDays(today,19)),to=ds(addDays(today,26));
+  if(riskDemo){riskDemo.from=from;riskDemo.to=to}
+  else ABSENCES.push({id:'a-risk-demo',empId:'e4',type:'vacation',from,to,note:'Sommerurlaub'});
+}
 function show(i){$(i)&&$(i).classList.remove('hidden')}
 function hide(i){$(i)&&$(i).classList.add('hidden')}
 
@@ -834,11 +1091,214 @@ function chkViols(shifts,emps){
 }
 function getViols(){return chkViols(SHIFTS,EMPS)}
 
+// ═══════════════════════════════════════════════════════════════════════
+// PFLEGEPILOT — KI-SERVICE-SCHICHT
+// ─────────────────────────────────────────────────────────────────────
+// Alle KI-Funktionen (Begrüßung, Chat, Dienstplan-Analyse, Einspringer-Suche,
+// Personalrisiko, Kostenanalyse, Schichttausch-Prüfung) laufen zentral über
+// dieses Objekt. Die Logik arbeitet heute regelbasiert auf den lokalen
+// Demo-Daten (EMPS/SHIFTS/ABSENCES/TRAININGS) – exakt an den Stellen, die
+// mit "INTEGRATION:" markiert sind, wird später Integrations.openai über
+// eine Backend-Route (Node.js/REST, siehe Integrations-Konfiguration oben)
+// angebunden. Die Aufruf-Signaturen bleiben dabei stabil, sodass die
+// Render-Funktionen unten nicht angepasst werden müssen.
+// ═══════════════════════════════════════════════════════════════════════
+function hoursInWeek(empId,ws){const days=wkDays(ws).map(ds);return SHIFTS.filter(s=>s.empId===empId&&days.includes(s.date)).reduce((sum,s)=>sum+(ST[s.type]?.h||0),0)}
+function staffingNeeded(type,dow){if(type==='night')return(dow===5||dow===6)?2:1;return STAFFING_REQUIREMENTS[type]||0}
+
+const AIService={
+  // Mindestbesetzung: liefert alle Tag/Schicht-Kombinationen mit Unterdeckung für die übergebenen Tage.
+  getStaffingGaps(days){
+    return days.flatMap(d=>Object.keys(STAFFING_REQUIREMENTS).map(type=>{
+      const dow=d.getDay(),needed=staffingNeeded(type,dow),assigned=SHIFTS.filter(s=>s.date===ds(d)&&s.type===type).length;
+      return{date:ds(d),dow,type,needed,assigned,gap:Math.max(0,needed-assigned)};
+    })).filter(g=>g.gap>0);
+  },
+  getExpiringTrainings(withinDays=14){
+    return TRAININGS.map(t=>({...t,daysLeft:Math.round((new Date(t.expires)-new Date(tod()))/864e5)}))
+      .filter(t=>t.daysLeft>=0&&t.daysLeft<=withinDays).sort((a,b)=>a.daysLeft-b.daysLeft);
+  },
+  getSickToday(){return ABSENCES.filter(a=>(a.type==='sick'||a.type==='child_sick')&&a.from<=tod()&&a.to>=tod())},
+  getDepartmentOvertime(ws=weekStart){
+    return DEPARTMENTS.map(dep=>{
+      let ot=0;EMPS.filter(e=>e.department===dep).forEach(e=>{const h=hoursInWeek(e.id,ws);if(h>e.weeklyHours)ot+=(h-e.weeklyHours)});
+      return{department:dep,overtimeHours:ot};
+    });
+  },
+
+  // Morgendliches Briefing für den Pflegepilot – Kernstück des Dashboards.
+  // INTEGRATION: Text-Generierung später via Integrations.openai (Endpoint: /api/ai/chat) statt Templates.
+  getMorningBriefing(){
+    const sick=this.getSickToday();
+    const trainings=this.getExpiringTrainings(7);
+    const gaps=this.getStaffingGaps(wkDays(weekStart));
+    const friGap=gaps.find(g=>g.dow===5&&g.type==='night');
+    const deptOT=this.getDepartmentOvertime().sort((a,b)=>b.overtimeHours-a.overtimeHours);
+    const worst=deptOT[0];
+    const lines=[];
+    lines.push(sick.length?`Heute fehlen ${sick.length} Pflegekraft${sick.length>1?'kräfte':''}.`:'Heute sind alle geplanten Mitarbeiter verfügbar.');
+    if(trainings.length)lines.push(`${trainings[0].name} (${eName(eById(trainings[0].empId))}) läuft in ${trainings[0].daysLeft} Tag${trainings[0].daysLeft===1?'':'en'} ab.`);
+    if(friGap)lines.push(friGap.gap===1?'Für Freitag fehlt noch ein Nachtdienst.':`Für Freitag fehlen noch ${friGap.gap} Nachtdienste.`);
+    if(worst&&worst.overtimeHours>0)lines.push(`Im ${worst.department} wurden bereits ${Math.round(worst.overtimeHours)} Überstunden aufgebaut.`);
+    const suggestionCount=gaps.length+(worst&&worst.overtimeHours>8?1:0)+trainings.length;
+    lines.push(suggestionCount>0?`Ich habe bereits ${suggestionCount} passende Lösungsvorschläge vorbereitet.`:'Aktuell liegen keine dringenden Handlungsempfehlungen vor.');
+    const emp=eById(CU?.empId);
+    return{greeting:`Guten Morgen${emp?' '+(emp.role==='employee'?emp.firstname:eName(emp)):''}.`,lines,stats:{sickToday:sick.length,openShifts:gaps.length,trainingsSoon:trainings.length,worstDept:worst},suggestionCount};
+  },
+
+  // Freitext-Chat der Leitung mit dem Pflegepilot. Simuliert mit Verzögerung, damit die spätere
+  // asynchrone OpenAI-Antwort (Integrations.openai, Endpoint: /api/ai/chat) ohne UI-Änderung eingehängt werden kann.
+  chatAnswer(question){
+    return new Promise(resolve=>{
+      setTimeout(()=>{
+        const ql=question.toLowerCase();
+        let text;
+        if(ql.includes('frühdienst')&&ql.includes('morgen')){
+          const date=ds(addDays(new Date(),1));
+          const cands=AIService.findSubstitutes(date,'early').slice(0,3);
+          text=cands.length?`Für den Frühdienst morgen (${fmtL(date)}) kämen infrage: ${cands.map(c=>`${eName(c.emp)} (${c.score}% Match)`).join(', ')}.`:'Für morgen früh ist aktuell niemand verfügbar – ich empfehle die Einspringer-Suche mit erweiterten Kriterien.';
+        }else if(ql.includes('fehlen')&&(ql.includes('nächste woche')||ql.includes('naechste woche'))){
+          const nextWs=wkStart(addDays(weekStart,7));const gaps=AIService.getStaffingGaps(wkDays(nextWs));
+          text=gaps.length?`Nächste Woche fehlen voraussichtlich ${gaps.length} Dienst${gaps.length>1?'e':''}: ${gaps.slice(0,3).map(g=>`${fmtL(g.date)} ${ST[g.type].label} (${g.gap}x)`).join(', ')}${gaps.length>3?' und weitere':''}. Hauptgrund sind offene Mindestbesetzungen und Abwesenheiten.`:'Für nächste Woche ist die Besetzung laut aktueller Planung vollständig.';
+        }else if(ql.includes('überstunden')||ql.includes('ueberstunden')){
+          const named=EMPS.find(e=>ql.includes(e.firstname.toLowerCase()));
+          if(named){const h=hoursInWeek(named.id,weekStart);const ot=Math.max(0,h-named.weeklyHours);text=`${eName(named)} hat diese Woche ${h} Stunden gearbeitet (Soll: ${named.weeklyHours}h) – das sind ${ot>0?ot+' Überstunden':'keine Überstunden'}.`}
+          else{const deptOT=AIService.getDepartmentOvertime().sort((a,b)=>b.overtimeHours-a.overtimeHours);text=`Aktuell die meisten Überstunden: ${deptOT.slice(0,2).map(d=>`${d.department} (${Math.round(d.overtimeHours)}h)`).join(', ')}. Frag mich gern nach einer bestimmten Person, z.B. „Wie viele Überstunden hat Anna?".`}
+        }else if(ql.includes('stunden')&&(ql.includes('offen')||ql.includes('frei'))){
+          const open=EMPS.map(e=>({e,diff:e.weeklyHours-hoursInWeek(e.id,weekStart)})).filter(x=>x.diff>0).sort((a,b)=>b.diff-a.diff);
+          text=open.length?`Noch offene Stunden diese Woche: ${open.slice(0,4).map(x=>`${eName(x.e)} (${x.diff}h)`).join(', ')}.`:'Alle Mitarbeiter haben ihre Sollstunden diese Woche bereits erreicht.';
+        }else{
+          text='Diese Frage kann ich aktuell nur simuliert beantworten. Sobald die OpenAI-Anbindung aktiv ist, beantworte ich auch freie Fragen zu Dienstplan, Personal und Kosten in natürlicher Sprache.';
+        }
+        resolve({text});
+      },650+Math.random()*450);
+    });
+  },
+
+  // Vollständige Dienstplan-Analyse vor Veröffentlichung: ArbZG, Ruhezeiten, Qualifikation,
+  // Mindestbesetzung, Urlaub/Krankmeldungen, Überstunden.
+  analyzeSchedule(shifts,days){
+    shifts=shifts||SHIFTS;days=days||wkDays(weekStart);
+    const issues=[];
+    chkViols(shifts,EMPS).forEach(v=>issues.push({severity:v.severity,category:v.type==='rest'?'Ruhezeiten':v.type==='ot'?'Überstunden':'Arbeitszeitgesetz',msg:v.msg,
+      suggestion:v.type==='rest'?'Schicht verschieben oder anderen Mitarbeiter einteilen, um die 11h-Ruhezeit (§5 ArbZG) einzuhalten.':v.type==='ot'?'Zusätzliche Aushilfe einplanen oder Dienste im Team umverteilen.':'Sonntags-/Wochenenddienste gleichmäßiger auf das Team verteilen.'}));
+    this.getStaffingGaps(days).forEach(g=>issues.push({severity:g.type==='night'?'critical':'warning',category:'Mindestbesetzung',
+      msg:`${fmtL(g.date)}: ${g.gap} ${ST[g.type].label}dienst${g.gap>1?'e':''} unbesetzt (${g.assigned}/${g.needed} besetzt)`,suggestion:'Einspringer-Suche nutzen oder offene Schicht frühzeitig ausschreiben.'}));
+    const byDayType={};shifts.forEach(s=>{const k=s.date+'_'+s.type;(byDayType[k]=byDayType[k]||[]).push(s)});
+    Object.entries(byDayType).forEach(([k,list])=>{
+      if(!list.some(s=>eById(s.empId)?.qualifications.includes('Pflegefachkraft'))){
+        const[date,type]=k.split('_');
+        issues.push({severity:'warning',category:'Qualifikation',msg:`${fmtL(date)} ${ST[type].label}: keine examinierte Pflegefachkraft eingeteilt`,suggestion:'Mindestens eine Pflegefachkraft pro Schicht einplanen (Fachkraftquote).'});
+      }
+    });
+    shifts.forEach(s=>{
+      const conflict=ABSENCES.find(a=>a.empId===s.empId&&a.from<=s.date&&a.to>=s.date);
+      if(conflict)issues.push({severity:'critical',category:'Urlaub/Krankmeldung',msg:`${eName(eById(s.empId))} ist am ${fmtL(s.date)} eingeteilt, aber als „${AT[conflict.type].label}" gemeldet`,suggestion:'Schicht neu besetzen oder die Abwesenheitsmeldung korrigieren.'});
+    });
+    const critical=issues.filter(i=>i.severity==='critical').length,warnings=issues.filter(i=>i.severity==='warning').length;
+    return{ok:issues.length===0,critical,warnings,issues,checkedAt:new Date()};
+  },
+
+  // Intelligenter Einspringer: bewertet jeden Mitarbeiter für eine konkrete Schicht und erklärt die Auswahl.
+  evalCandidate(emp,date,type,qualFilter){
+    if(qualFilter&&!emp.qualifications.includes(qualFilter))return{emp,excluded:true,excludeReason:`fehlende Qualifikation „${qualFilter}"`};
+    if(ABSENCES.some(a=>a.empId===emp.id&&a.from<=date&&a.to>=date))return{emp,excluded:true,excludeReason:'abwesend (Urlaub/Krankheit)'};
+    if(SHIFTS.some(s=>s.empId===emp.id&&s.date===date))return{emp,excluded:true,excludeReason:'bereits an diesem Tag eingeteilt'};
+    const dow=new Date(date).getDay();
+    if(emp.unavailDays.includes(dow))return{emp,excluded:true,excludeReason:'an diesem Wochentag nicht verfügbar'};
+    const before=chkViols(SHIFTS,EMPS).filter(v=>v.e?.id===emp.id).map(v=>v.id);
+    const hypothetical=[...SHIFTS,{id:'_hyp',empId:emp.id,date,type}];
+    const newViols=chkViols(hypothetical,EMPS).filter(v=>v.e?.id===emp.id&&v.severity==='critical'&&!before.includes(v.id));
+    if(newViols.length)return{emp,excluded:true,excludeReason:newViols[0].msg};
+    const reasons=[];
+    if(emp.qualifications.includes('Pflegefachkraft'))reasons.push('✓ examinierte Pflegefachkraft');
+    reasons.push('✓ genügend Ruhezeit');
+    const hrsThisWeek=hoursInWeek(emp.id,wkStart(new Date(date)));
+    reasons.push(`✓ nur ${hrsThisWeek} Stunden gearbeitet`);
+    const daysSinceSub=emp.lastSubDate?Math.max(0,Math.round((new Date(date)-new Date(emp.lastSubDate))/864e5)):999;
+    reasons.push(`✓ zuletzt vor ${daysSinceSub} Tagen eingesprungen`);
+    const prefMatch=emp.shiftPrefs.includes(type)||emp.wishes?.preferShift===type;
+    if(prefMatch)reasons.push('✓ entspricht Wunschdienst');
+    if(emp.wishes?.noNight&&type==='night')reasons.push('✗ möchte laut Wunschprofil keine Nachtdienste');
+    const distanceKm=3+((EMPS.indexOf(emp)*7)%17); // Platzhalter bis zur Anbindung echter Geodaten
+    let score=55;
+    if(emp.qualifications.includes('Pflegefachkraft'))score+=8;
+    if(prefMatch)score+=15;
+    if(emp.wishes?.noNight&&type==='night')score-=18;
+    score-=Math.max(0,hrsThisWeek-emp.weeklyHours)*1.4;
+    score+=Math.min(18,daysSinceSub/2);
+    score-=distanceKm*0.4;
+    score=Math.max(5,Math.min(98,Math.round(score)));
+    return{emp,excluded:false,score,reasons,hrsThisWeek,daysSinceSub,distanceKm};
+  },
+  findSubstitutes(date,type='early',qualFilter=''){
+    return EMPS.map(e=>this.evalCandidate(e,date,type,qualFilter)).filter(c=>!c.excluded).sort((a,b)=>b.score-a.score);
+  },
+
+  // Personalrisiko: Ampel je Wohnbereich + einfache Prognose (simulierte Daten).
+  computeRisk(){
+    const deptOT=this.getDepartmentOvertime();
+    const sickToday=this.getSickToday();
+    const gaps=this.getStaffingGaps(wkDays(weekStart));
+    const departments=DEPARTMENTS.map(dep=>{
+      const ot=deptOT.find(d=>d.department===dep)?.overtimeHours||0;
+      const deptSick=sickToday.filter(a=>eById(a.empId)?.department===dep).length;
+      let level='green',label='Stabil';
+      if(ot>=12||deptSick>=2){level='red';label='Kritische Unterbesetzung';}
+      else if(ot>=6||deptSick>=1){level='amber';label='Personalengpass wahrscheinlich';}
+      return{department:dep,level,label,overtimeHours:Math.round(ot),sickToday:deptSick,headcount:EMPS.filter(e=>e.department===dep).length};
+    });
+    const upcomingVacation=ABSENCES.filter(a=>a.type==='vacation'&&a.from>=tod()&&a.from<=ds(addDays(new Date(),28)));
+    const affected=[...new Set(upcomingVacation.map(a=>a.empId))].filter(id=>eById(id)?.qualifications.includes('Pflegefachkraft'));
+    const forecastWeek=isoWk(addDays(new Date(),21));
+    const forecastText=affected.length>0?`In der Kalenderwoche ${forecastWeek} ${affected.length===1?'fehlt voraussichtlich eine examinierte Pflegekraft':'fehlen voraussichtlich '+affected.length+' examinierte Pflegekräfte'} durch geplanten Urlaub.`:'Für die kommenden Wochen ist laut aktueller Planung keine kritische Unterbesetzung zu erwarten.';
+    const overall=departments.some(d=>d.level==='red')?'red':departments.some(d=>d.level==='amber')?'amber':'green';
+    return{departments,overall,forecastText,openShifts:gaps.length};
+  },
+
+  // Kostenanalyse: Überstunden-, Nacht- und Wochenendkosten sowie Einsparpotenzial (simulierte Sätze).
+  computeCosts(){
+    const monthStart=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+    const monthEnd=new Date(new Date().getFullYear(),new Date().getMonth()+1,0);
+    const monthShifts=SHIFTS.filter(s=>{const d=new Date(s.date);return d>=monthStart&&d<=monthEnd});
+    let overtimeHours=0;EMPS.forEach(e=>{const h=hoursInWeek(e.id,weekStart);if(h>e.weeklyHours)overtimeHours+=(h-e.weeklyHours)});
+    const nightHours=monthShifts.filter(s=>s.type==='night').reduce((sum,s)=>sum+(ST[s.type].h||0),0);
+    const weekendHours=monthShifts.filter(s=>[0,6].includes(new Date(s.date).getDay())).reduce((sum,s)=>sum+(ST[s.type]?.h||0),0);
+    const totalHours=monthShifts.reduce((sum,s)=>sum+(ST[s.type]?.h||0),0);
+    const rate=COST_CONFIG.baseHourlyRate;
+    const baseCost=totalHours*rate;
+    const overtimeCost=overtimeHours*rate*(1+COST_CONFIG.overtimeSurcharge);
+    const nightCost=nightHours*rate*COST_CONFIG.nightSurcharge;
+    const weekendCost=weekendHours*rate*COST_CONFIG.weekendSurcharge;
+    const savableHours=Math.round(overtimeHours*0.6);
+    const savingsPotential=savableHours*rate*(1+COST_CONFIG.overtimeSurcharge);
+    return{overtimeHours:Math.round(overtimeHours),overtimeCost:Math.round(overtimeCost),nightHours,nightCost:Math.round(nightCost),weekendHours,weekendCost:Math.round(weekendCost),
+      estimatedTotal:Math.round(baseCost+overtimeCost+nightCost+weekendCost),savableHours,savingsPotential:Math.round(savingsPotential)};
+  },
+
+  // Schichttausch-Prüfung: ArbZG, Qualifikation, Ruhezeiten, Vertragsstunden.
+  validateSwap(shiftAId,shiftBId){
+    const a=SHIFTS.find(s=>s.id===shiftAId),b=SHIFTS.find(s=>s.id===shiftBId);
+    if(!a||!b)return{allowed:false,reasons:['Eine der beiden Schichten wurde nicht gefunden.']};
+    const empA=eById(a.empId),empB=eById(b.empId);
+    const reasons=[];let allowed=true;
+    const reqQual='Pflegefachkraft';
+    if(empA.qualifications.includes(reqQual)&&!empB.qualifications.includes(reqQual)){allowed=false;reasons.push(`${eName(empB)} hat nicht die Qualifikation „${reqQual}", die der Dienst von ${eName(empA)} erfordert.`);}
+    if(empB.qualifications.includes(reqQual)&&!empA.qualifications.includes(reqQual)){allowed=false;reasons.push(`${eName(empA)} hat nicht die Qualifikation „${reqQual}", die der Dienst von ${eName(empB)} erfordert.`);}
+    const before=chkViols(SHIFTS,EMPS).filter(v=>v.e?.id===empA.id||v.e?.id===empB.id).map(v=>v.id);
+    const swapped=SHIFTS.map(s=>s.id===a.id?{...s,empId:b.empId}:s.id===b.id?{...s,empId:a.empId}:s);
+    const after=chkViols(swapped,EMPS).filter(v=>(v.e?.id===empA.id||v.e?.id===empB.id)&&!before.includes(v.id));
+    if(after.length){allowed=false;after.forEach(v=>reasons.push(v.msg));}
+    if(reasons.length===0)reasons.push('Arbeitszeitgesetz, Qualifikation, Ruhezeiten und Vertragsstunden wurden geprüft – keine Verstöße gefunden.');
+    return{allowed,reasons,empA,empB,shiftA:a,shiftB:b};
+  },
+};
+
 function doLogin(){
   const email=$('login-email').value.trim(),pw=$('login-pw').value;
   const u=USERS.find(x=>x.email===email&&x.pw===pw);
   if(!u){show('login-error');$('login-error').textContent='E-Mail oder Passwort ungültig.';return}
-  hide('login-error');CU=u;genShifts();
+  hide('login-error');CU=u;genShifts();seedDynamicDemoData();
   $('login-screen').classList.add('hidden');show('app-screen');
   const e=eById(u.empId);const av=eInit(e)||'A';const col=eCol(e)||'#2563eb';
   $('sb-av').textContent=av;$('sb-av').style.background=`linear-gradient(135deg,${col},#1e40af)`;
@@ -850,12 +1310,12 @@ function doLogin(){
   if(u.role==='employee')$('add-emp-btn').style.display='none';
   const ws=wkStart(new Date());const we=new Date(ws);we.setDate(we.getDate()+6);
   $('ai-from').value=ds(ws);$('ai-to').value=ds(we);$('sub-date').value=tod();
-  initAIChat();navigate('schedule');
+  initAIChat();navigate('dashboard');
 }
 function doLogout(){CU=null;hide('app-screen');$('login-screen').classList.remove('hidden')}
 function toggleSidebar(){const sb=$('sidebar');sb.classList.toggle('open');$('sidebar-overlay').style.display=sb.classList.contains('open')?'block':'none'}
 
-const VT={'schedule':'Dienstplan','ai':'KI-Assistent','violations':'Verstöße','employees':'Mitarbeiter','absences':'Abwesenheiten','workhours':'Arbeitszeitkonto','settings':'Einstellungen','audit':'Audit-Log'};
+const VT={'dashboard':'Dashboard','schedule':'Dienstplan','ai':'KI-Assistent','violations':'Verstöße','swap':'Schichttausch','employees':'Mitarbeiter','absences':'Abwesenheiten','workhours':'Arbeitszeitkonto','wishes':'Wünsche','risk':'Personalrisiko','costs':'Kostenanalyse','settings':'Einstellungen','audit':'Audit-Log'};
 function navigate(v){
   $$('.view').forEach(el=>el.classList.remove('active'));
   $$('.nav-item').forEach(el=>el.classList.remove('active'));
@@ -863,14 +1323,20 @@ function navigate(v){
   $$('.nav-item').forEach(b=>{if(b.getAttribute('onclick')?.includes(`'${v}'`))b.classList.add('active')});
   $('topbar-title').textContent=VT[v]||v;
   if(window.innerWidth<900){$('sidebar')?.classList.remove('open');$('sidebar-overlay').style.display='none'}
+  if(v==='dashboard')renderDashboard();
   if(v==='schedule')renderSched();
   if(v==='violations')renderViols();
+  if(v==='swap')renderSwap();
   if(v==='employees')renderEmps();
   if(v==='absences')renderAbs();
   if(v==='workhours')renderWH();
+  if(v==='wishes')renderWishes();
+  if(v==='risk')renderRisk();
+  if(v==='costs')renderCosts();
   if(v==='settings')renderSettings('facility');
   if(v==='audit')renderAudit();
   updViolBadge();
+  updRiskBadge();
 }
 
 function updViolBadge(){
@@ -969,8 +1435,9 @@ function renderEmps(){
       <div class="emp-card-footer"><span style="font-size:11px;color:var(--muted)">${emp.email}</span>${CU?.role!=='employee'?`<button class="btn btn-ghost btn-sm" onclick="openEmpModal('${emp.id}')">Bearbeiten</button>`:''}</div></div>`;
   }).join('');
 }
+let efWishFree=[];
 function openEmpModal(id=''){
-  $('emp-tab-base').classList.add('active');$('emp-tab-work').classList.remove('active');$('emp-tab-qualif').classList.remove('active');
+  ['base','work','qualif','wishes'].forEach((x,i)=>$(`emp-tab-${x}`).classList.toggle('active',i===0));
   $$('.form-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
   const emp=id?eById(id):null;$('ef-edit-id').value=id;
   $('emp-modal-title').textContent=emp?'Mitarbeiter bearbeiten':'Mitarbeiter anlegen';
@@ -979,20 +1446,36 @@ function openEmpModal(id=''){
   $$('[name=pref]').forEach(c=>c.checked=emp?.shiftPrefs?.includes(c.value)||false);
   $$('[name=unavail]').forEach(c=>c.checked=emp?.unavailDays?.includes(+c.value)||false);
   $('qualif-list').innerHTML=QUALS.map(q=>`<label class="qualif-item"><input type="checkbox" name="qualif" value="${q}"${emp?.qualifications?.includes(q)?' checked':''}> ${q}</label>`).join('');
+  const w=emp?.wishes||{};
+  $('ef-pref-shift').value=w.preferShift||'';$('ef-no-night').checked=!!w.noNight;$('ef-max-weekends').value=w.maxWeekends||'';
+  efWishFree=[...(w.wishFreeDays||[])];renderWishFreeChips();
   show('emp-modal');
 }
+function renderWishFreeChips(){
+  $('ef-wishfree-list').innerHTML=efWishFree.length===0?'<span style="font-size:11px;color:var(--muted)">Keine wunschfreien Tage hinterlegt</span>':
+    efWishFree.map(d=>`<span class="tag tag-blue">${fmtL(d)} <button type="button" onclick="removeWishFreeDay('${d}')" style="border:none;background:none;cursor:pointer;color:inherit;margin-left:3px">✕</button></span>`).join('');
+}
+function addWishFreeDay(){
+  const d=$('ef-wishfree-add').value;if(!d)return;
+  if(!efWishFree.includes(d))efWishFree.push(d);
+  efWishFree.sort();renderWishFreeChips();$('ef-wishfree-add').value='';
+}
+function removeWishFreeDay(d){efWishFree=efWishFree.filter(x=>x!==d);renderWishFreeChips()}
 function saveEmployee(){
   const id=$('ef-edit-id').value,first=$('ef-first').value.trim(),last=$('ef-last').value.trim(),email=$('ef-email').value.trim();
   if(!first||!last||!email){toast('Vorname, Nachname und E-Mail erforderlich','error');return}
   const prefs=[...$$('[name=pref]')].filter(c=>c.checked).map(c=>c.value);
   const unavail=[...$$('[name=unavail]')].filter(c=>c.checked).map(c=>+c.value);
   const qualifs=[...$$('[name=qualif]')].filter(c=>c.checked).map(c=>c.value);
-  const data={firstname:first,lastname:last,email,phone:$('ef-phone').value,role:$('ef-role').value,employment:$('ef-employment').value,weeklyHours:+$('ef-weekly').value,vacationDays:+$('ef-vacation').value,shiftPrefs:prefs,unavailDays:unavail,qualifications:qualifs};
+  const wishes={preferShift:$('ef-pref-shift').value||null,noNight:$('ef-no-night').checked,maxWeekends:$('ef-max-weekends').value?+$('ef-max-weekends').value:null,wishFreeDays:[...efWishFree]};
+  const existing=id?eById(id):null;
+  const data={firstname:first,lastname:last,email,phone:$('ef-phone').value,role:$('ef-role').value,employment:$('ef-employment').value,weeklyHours:+$('ef-weekly').value,vacationDays:+$('ef-vacation').value,shiftPrefs:prefs,unavailDays:unavail,qualifications:qualifs,wishes,
+    department:existing?.department||DEPARTMENTS[EMPS.length%DEPARTMENTS.length],lastSubDate:existing?.lastSubDate||ds(addDays(new Date(),-10))};
   if(id)EMPS=EMPS.map(e=>e.id===id?{...e,...data}:e);else EMPS.push({id:'e'+Date.now(),...data});
   closeModal('emp-modal');renderEmps();toast(id?'Mitarbeiter aktualisiert':'Mitarbeiter angelegt');addAudit(`${id?'Mitarbeiter aktualisiert':'Neuer Mitarbeiter'}: ${first} ${last}`);
 }
 function showEmpTab(t,btn){
-  ['base','work','qualif'].forEach(x=>$(`emp-tab-${x}`).classList.toggle('active',x===t));
+  ['base','work','qualif','wishes'].forEach(x=>$(`emp-tab-${x}`).classList.toggle('active',x===t));
   $$('.form-tab').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');
 }
 
@@ -1027,6 +1510,151 @@ function renderWH(){
   <div style="overflow-x:auto"><table class="wh-table"><thead><tr><th>Datum</th><th>Schicht</th><th>Beginn</th><th>Ende</th><th>Std</th></tr></thead><tbody>${ms.length===0?'<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted)">Keine Dienste in diesem Monat</td></tr>':ms.map(s=>{const st=ST[s.type];return`<tr><td class="mono">${fmtL(s.date)}</td><td><span style="background:${st.bg};color:${st.color};padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600">${st.label}</span></td><td class="mono">${st.start}</td><td class="mono">${st.end}</td><td class="mono">${st.h}h</td></tr>`}).join('')}</tbody></table></div></div>`;
 }
 
+// ── MITARBEITERWÜNSCHE ──
+// Wünsche werden direkt am Mitarbeiter gepflegt (siehe EMPS[*].wishes) und hier zentral angezeigt.
+// Die KI berücksichtigt sie in AIService.evalCandidate() (Einspringer) sowie in runAI() (Dienstplanung).
+function renderWishes(){
+  $('wishes-list').innerHTML=EMPS.map(emp=>{
+    const w=emp.wishes||{};
+    return`<div class="wish-row">
+      <div style="width:30px;height:30px;border-radius:50%;background:${eCol(emp)};color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${eInit(emp)}</div>
+      <div style="min-width:130px"><div style="font-size:13px;font-weight:600">${eName(emp)}</div><div style="font-size:11px;color:var(--muted)">${emp.department}</div></div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;flex:1">
+        <span class="wish-tag ${w.preferShift?'on':''}">${w.preferShift?'Bevorzugt '+ST[w.preferShift].label:'Keine Schichtpräferenz'}</span>
+        <span class="wish-tag ${w.noNight?'on':''}">${w.noNight?'Keine Nachtdienste':'Nachtdienst möglich'}</span>
+        <span class="wish-tag ${w.maxWeekends?'on':''}">${w.maxWeekends?'Max. '+w.maxWeekends+' Wochenenden/Monat':'Kein Wochenendlimit'}</span>
+        <span class="wish-tag ${w.wishFreeDays&&w.wishFreeDays.length?'on':''}">${w.wishFreeDays&&w.wishFreeDays.length?w.wishFreeDays.length+' wunschfreie Tage':'Keine wunschfreien Tage hinterlegt'}</span>
+      </div>
+      ${CU?.role!=='employee'?`<button class="btn btn-ghost btn-sm" onclick="openEmpModal('${emp.id}');showEmpTab('wishes',document.querySelector('#emp-modal .form-tab:nth-child(4)'))">Bearbeiten</button>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ── PERSONALRISIKO (AMPEL) ──
+function renderRisk(){
+  const risk=AIService.computeRisk();
+  $('risk-rows').innerHTML=risk.departments.map(d=>`
+    <div class="risk-row">
+      <div class="risk-light ${d.level}"></div>
+      <div><div class="risk-dept">${d.department}</div><div class="risk-label">${d.label}</div></div>
+      <div class="risk-meta">${d.headcount} Mitarbeiter · ${d.overtimeHours}h Überstunden${d.sickToday?' · '+d.sickToday+' krank heute':''}</div>
+    </div>`).join('');
+  $('risk-forecast').textContent=risk.forecastText;
+  updRiskBadge();
+}
+
+// ── KOSTENANALYSE ──
+function renderCosts(){
+  const c=AIService.computeCosts();
+  const eur=n=>'€ '+n.toLocaleString('de-DE');
+  const tiles=[
+    {val:c.overtimeHours+'h',lbl:'Überstunden (Woche)',sub:eur(c.overtimeCost)},
+    {val:eur(c.nightCost),lbl:'Nachtzuschläge (Monat)',sub:c.nightHours+'h Nachtdienst'},
+    {val:eur(c.weekendCost),lbl:'Wochenendzuschläge (Monat)',sub:c.weekendHours+'h am Wochenende'},
+    {val:eur(c.estimatedTotal),lbl:'Geschätzte Personalkosten (Monat)',sub:'inkl. Zuschläge'},
+  ];
+  $('cost-grid').innerHTML=tiles.map(t=>`<div class="cost-tile"><div class="cost-val">${t.val}</div><div class="cost-lbl">${t.lbl}</div><div style="font-size:10.5px;color:var(--subtle);margin-top:2px">${t.sub}</div></div>`).join('');
+  $('cost-savings-num').textContent=c.savableHours+'h';
+  $('cost-savings-txt').textContent=c.savableHours>0?`Durch bessere Verteilung können diesen Monat rund ${c.savableHours} Überstunden (≈ ${eur(c.savingsPotential)}) vermieden werden.`:'Aktuell besteht kein nennenswertes Einsparpotenzial durch Umverteilung.';
+}
+
+// ── SCHICHTTAUSCH ──
+function swapOptions(){
+  const days=[...wkDays(weekStart),...wkDays(wkStart(addDays(weekStart,7)))].map(ds);
+  return SHIFTS.filter(s=>days.includes(s.date)).sort((a,b)=>a.date.localeCompare(b.date))
+    .map(s=>`<option value="${s.id}">${eName(eById(s.empId))} – ${fmtL(s.date)} ${ST[s.type].label}</option>`).join('');
+}
+function renderSwap(){
+  const opts=swapOptions();
+  $('swap-a').innerHTML=opts;$('swap-b').innerHTML=opts;
+  if($('swap-b').options.length>1)$('swap-b').selectedIndex=1;
+  $('swap-list').innerHTML=SWAPS.length===0?'<div class="empty-state"><div style="font-size:36px">🔁</div><h3>Noch keine Tauschanfragen</h3><p>Schlagen Sie oben einen Tausch vor – die KI prüft ihn sofort.</p></div>':
+    SWAPS.slice().reverse().map(sw=>`
+      <div class="swap-card">
+        <div class="swap-parties">
+          <strong>${eName(sw.empA)}</strong> (${fmtL(sw.shiftA.date)} ${ST[sw.shiftA.type].label})
+          <span class="swap-arrow">⇄</span>
+          <strong>${eName(sw.empB)}</strong> (${fmtL(sw.shiftB.date)} ${ST[sw.shiftB.type].label})
+        </div>
+        <div class="swap-verdict ${sw.allowed?'allowed':'denied'}">${sw.allowed?'✅ Der Tausch ist zulässig.':'⛔ Der Tausch ist nicht zulässig.'}<div class="explain-box" style="background:transparent;border:none;padding:6px 0 0"><ul>${sw.reasons.map(r=>`<li>• ${r}</li>`).join('')}</ul></div></div>
+        ${sw.allowed&&!sw.executed?`<button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="executeSwap('${sw.id}')">Tausch durchführen</button>`:''}
+        ${sw.executed?'<div style="font-size:11.5px;color:var(--green);margin-top:8px;font-weight:600">✓ Tausch durchgeführt</div>':''}
+      </div>`).join('');
+}
+function proposeSwap(){
+  const aId=$('swap-a').value,bId=$('swap-b').value;
+  if(!aId||!bId||aId===bId){toast('Bitte zwei unterschiedliche Schichten wählen','error');return}
+  const verdict=AIService.validateSwap(aId,bId);
+  SWAPS.push({id:'sw'+Date.now(),shiftAId:aId,shiftBId:bId,...verdict,executed:false});
+  addAudit(`Schichttausch geprüft: ${eName(verdict.empA)} ⇄ ${eName(verdict.empB)} – ${verdict.allowed?'zulässig':'abgelehnt'}`);
+  renderSwap();
+}
+function executeSwap(id){
+  const sw=SWAPS.find(x=>x.id===id);if(!sw||!sw.allowed||sw.executed)return;
+  SHIFTS=SHIFTS.map(s=>s.id===sw.shiftAId?{...s,empId:sw.empB.id}:s.id===sw.shiftBId?{...s,empId:sw.empA.id}:s);
+  sw.executed=true;
+  addAudit(`Schichttausch durchgeführt: ${eName(sw.empA)} ⇄ ${eName(sw.empB)}`);
+  toast('Tausch durchgeführt');renderSwap();updViolBadge();updRiskBadge();
+}
+
+// ── DASHBOARD / PFLEGEPILOT ──
+function renderDashboard(){
+  const briefing=AIService.getMorningBriefing();
+  $('pilot-greeting').textContent=briefing.greeting;
+  $('pilot-lines').innerHTML=briefing.lines.map(l=>`<p>${l}</p>`).join('');
+  const gaps=AIService.getStaffingGaps(wkDays(weekStart));
+  const sick=AIService.getSickToday();
+  const vacToday=ABSENCES.filter(a=>a.type==='vacation'&&a.from<=tod()&&a.to>=tod());
+  const overtime=EMPS.reduce((sum,e)=>sum+Math.max(0,hoursInWeek(e.id,weekStart)-e.weeklyHours),0);
+  const costs=AIService.computeCosts();
+  const viols=getViols();
+  const tiles=[
+    {icon:'🗓️',val:gaps.length,lbl:'Offene Schichten',go:'schedule'},
+    {icon:'🤒',val:sick.length,lbl:'Krankmeldungen',go:'absences'},
+    {icon:'📚',val:TRAININGS.length,lbl:'Fortbildungen',go:'employees'},
+    {icon:'⏳',val:AIService.getExpiringTrainings(30).length,lbl:'Ablaufende Qualifikationen',go:'employees'},
+    {icon:'⏱️',val:Math.round(overtime)+'h',lbl:'Überstunden (Woche)',go:'workhours'},
+    {icon:'🏖️',val:vacToday.length,lbl:'Urlaub heute',go:'absences'},
+    {icon:'💶',val:'€ '+costs.estimatedTotal.toLocaleString('de-DE'),lbl:'Personalkosten (Monat)',go:'costs'},
+    {icon:'⚠️',val:viols.length,lbl:'Warnungen',go:'violations'},
+    {icon:'💡',val:briefing.suggestionCount,lbl:'Vorschläge',go:'ai'},
+  ];
+  $('dash-grid').innerHTML=tiles.map(t=>`<div class="dash-tile" onclick="navigate('${t.go}')"><div class="dash-tile-icon">${t.icon}</div><div class="dash-tile-val">${t.val}</div><div class="dash-tile-lbl">${t.lbl}</div></div>`).join('');
+  $('dash-warnings').innerHTML=viols.length===0?'<p style="font-size:12px;color:var(--muted)">Keine offenen Warnungen.</p>':
+    viols.slice(0,5).map(v=>`<div class="v-item v-${v.severity}" style="margin-bottom:6px"><span style="font-size:14px">${v.severity==='critical'?'🔴':'🟡'}</span><div style="flex:1"><div class="v-msg" style="font-size:12.5px">${v.msg}</div></div></div>`).join('')+(viols.length>5?`<button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="navigate('violations')">Alle ${viols.length} ansehen →</button>`:'');
+  const suggestions=[];
+  if(gaps.length)suggestions.push(`${gaps.length} offene Schicht${gaps.length>1?'en':''} über die Einspringer-Suche besetzen.`);
+  if(overtime>8)suggestions.push('Dienste im Team umverteilen, um weitere Überstunden zu vermeiden.');
+  const expiring=AIService.getExpiringTrainings(14);
+  if(expiring.length)suggestions.push(`Fortbildung „${expiring[0].name}" für ${eName(eById(expiring[0].empId))} rechtzeitig verlängern.`);
+  if(!suggestions.length)suggestions.push('Aktuell keine dringenden Maßnahmen – der Dienstplan ist stabil.');
+  $('dash-suggestions').innerHTML=suggestions.map(s=>`<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px"><span>💡</span><span>${s}</span></div>`).join('');
+}
+function updRiskBadge(){
+  const r=AIService.computeRisk();const b=$('risk-badge');
+  if(r.overall==='green'){b.style.display='none';return}
+  b.style.display='';b.style.background=r.overall==='red'?'var(--red)':'var(--amber)';b.textContent=r.overall==='red'?'!':'~';
+}
+
+// ── KI-DIENSTPLAN-ANALYSE ──
+function openAnalysisModal(){
+  const days=wkDays(weekStart);
+  const report=AIService.analyzeSchedule(SHIFTS.filter(s=>days.map(ds).includes(s.date)),days);
+  $('an-week').textContent=isoWk(weekStart);
+  $('an-report-hdr').innerHTML=report.ok?
+    `<div class="report-hdr ok"><span style="font-size:22px">✅</span><div><strong>Dienstplan geprüft</strong><div style="font-size:12px;color:var(--muted)">Keine Verstöße gefunden – bereit zur Veröffentlichung.</div></div></div>`:
+    `<div class="report-hdr warn"><span style="font-size:22px">⚠️</span><div><strong>${report.critical} kritische Warnung${report.critical!==1?'en':''}, ${report.warnings} Hinweis${report.warnings!==1?'e':''}</strong><div style="font-size:12px;color:var(--muted)">Bitte vor Veröffentlichung prüfen.</div></div></div>`;
+  $('an-body').innerHTML=report.issues.length===0?'<div class="empty-state"><div style="font-size:36px;margin-bottom:6px">✅</div><h3>Alles in Ordnung</h3><p>Arbeitszeitgesetz, Ruhezeiten, Qualifikation, Mindestbesetzung, Urlaub, Krankmeldungen und Überstunden wurden geprüft.</p></div>':
+    report.issues.map(i=>`<div class="report-issue ${i.severity}"><span style="font-size:16px">${i.severity==='critical'?'🔴':'🟡'}</span><div style="flex:1"><div class="report-issue-cat">${i.category}</div><div style="font-size:13px">${i.msg}</div><div class="report-issue-sug">💡<span>${i.suggestion}</span></div></div></div>`).join('');
+  show('analysis-modal');
+}
+function publishSchedule(){
+  const report=AIService.analyzeSchedule(SHIFTS,wkDays(weekStart));
+  closeModal('analysis-modal');
+  addAudit(`Dienstplan KW${isoWk(weekStart)} veröffentlicht (${report.ok?'ohne Warnungen':report.critical+' kritisch, '+report.warnings+' Hinweise'})`);
+  toast(report.ok?'Dienstplan veröffentlicht':'Dienstplan veröffentlicht — bitte Warnungen im Blick behalten','info');
+}
+
 function initAIChat(){$('ai-chat').innerHTML=`<div class="ai-msg"><div class="ai-av">KI</div><div class="ai-bubble"><p>Hallo! Ich bin Ihr KI-Planungsassistent. Ich erstelle ArbZG-konforme Dienstpläne, erkenne Verstöße in Echtzeit und schlage Einspringer vor.</p><p style="margin-top:6px;color:var(--muted)">Wählen Sie einen Zeitraum und klicken Sie auf „KI-Plan erstellen".</p></div></div>`}
 function addAIMsg(text,role='ai'){const isU=role==='user';const d=document.createElement('div');d.className='ai-msg';d.innerHTML=`<div class="ai-av" style="${isU?'background:var(--blue-dark)':'background:var(--navy)'}">${isU?'Du':'KI'}</div><div class="ai-bubble ${isU?'ai-bubble-user':''}">${text.split('\n').map(l=>`<p>${l}</p>`).join('')}</div>`;$('ai-chat').appendChild(d);$('ai-chat').scrollTop=$('ai-chat').scrollHeight}
 function addAILoad(){const d=document.createElement('div');d.className='ai-msg';d.id='ai-load';d.innerHTML=`<div class="ai-av" style="background:var(--navy)">KI</div><div class="ai-bubble"><span>Plane</span> <span class="dot-anim"><span>.</span><span>.</span><span>.</span></span></div>`;$('ai-chat').appendChild(d);$('ai-chat').scrollTop=$('ai-chat').scrollHeight}
@@ -1039,24 +1667,29 @@ async function runAI(){
   const goal=$('ai-goal').value;
   const d1=new Date(fr),d2=new Date(to);const days=[];
   for(let d=new Date(d1);d<=d2;d.setDate(d.getDate()+1))days.push(ds(new Date(d)));
-  const nS=[];const eH={};EMPS.forEach(e=>eH[e.id]=0);let sid=Date.now();
+  const nS=[];const eH={};const weekendCount={};EMPS.forEach(e=>{eH[e.id]=0;weekendCount[e.id]=0});let sid=Date.now();
   for(const day of days){
-    const dow=new Date(day).getDay();
+    const dow=new Date(day).getDay();const isWeekend=dow===0||dow===6;
     for(const type of['early','late','night']){
-      const need=type==='night'?1:2;let asgn=0;
+      const need=staffingNeeded(type,dow);let asgn=0;
       const sorted=[...EMPS].sort((a,b)=>eH[a.id]-eH[b.id]);
       for(const emp of sorted){
         if(asgn>=need)break;
         if(ABSENCES.some(a=>a.empId===emp.id&&a.from<=day&&a.to>=day))continue;
         if(emp.unavailDays.includes(dow))continue;
         if(eH[emp.id]+8>emp.weeklyHours*1.3)continue;
-        if(goal==='satisfaction'&&emp.shiftPrefs.length&&!emp.shiftPrefs.includes(type))continue;
+        // Mitarbeiterwünsche werden immer berücksichtigt (nicht nur bei Optimierungsziel "Zufriedenheit")
+        if(emp.wishes?.noNight&&type==='night')continue;
+        if(emp.wishes?.wishFreeDays?.includes(day))continue;
+        if(isWeekend&&emp.wishes?.maxWeekends&&weekendCount[emp.id]>=emp.wishes.maxWeekends)continue;
+        if(goal==='satisfaction'&&emp.shiftPrefs.length&&!emp.shiftPrefs.includes(type)&&emp.wishes?.preferShift!==type)continue;
         nS.push({id:'ai'+sid++,empId:emp.id,date:day,type,note:'KI-geplant',ai:true});eH[emp.id]+=8;asgn++;
+        if(isWeekend)weekendCount[emp.id]++;
       }
     }
   }
   const vs=chkViols(nS,EMPS);aiRes=nS;
-  const msg=[`✅ ${nS.length} Dienste für ${days.length} Tage geplant`,`📊 Abdeckungsrate: ${Math.min(100,Math.round(nS.length/(days.length*3)*100))}%`,vs.length===0?'✅ Keine ArbZG-Verstöße':'⚠️ '+vs.length+' Verstöße',goal==='balanced'?'⚖️ Gleichmäßig verteilt':'',goal==='satisfaction'?'💚 Wünsche berücksichtigt':''].filter(Boolean).join('\n');
+  const msg=[`✅ ${nS.length} Dienste für ${days.length} Tage geplant`,`📊 Abdeckungsrate: ${Math.min(100,Math.round(nS.length/(days.length*3)*100))}%`,vs.length===0?'✅ Keine ArbZG-Verstöße':'⚠️ '+vs.length+' Verstöße','💚 Mitarbeiterwünsche berücksichtigt (Nachtdienst, wunschfreie Tage, Wochenendlimit)',goal==='balanced'?'⚖️ Gleichmäßig verteilt':''].filter(Boolean).join('\n');
   addAIMsg(msg);
   $('ai-result-panel').classList.remove('hidden');
   $('ai-result-panel').innerHTML=`<div class="ai-result"><div class="ai-result-hdr"><h4>Planungsvorschlag – ${nS.length} Dienste</h4><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="rejectAI()">Ablehnen</button><button class="btn btn-primary btn-sm" onclick="acceptAI()">✓ Übernehmen</button></div></div><div style="padding:14px"><div class="stats-grid" style="margin-bottom:10px"><div class="stat-card blue" style="padding:10px 12px"><div class="stat-val" style="font-size:20px">${nS.length}</div><div class="stat-lbl">Dienste</div></div><div class="stat-card green" style="padding:10px 12px"><div class="stat-val" style="font-size:20px">${Math.min(100,Math.round(nS.length/(days.length*3)*100))}%</div><div class="stat-lbl">Abdeckung</div></div><div class="stat-card red" style="padding:10px 12px"><div class="stat-val" style="font-size:20px">${vs.length}</div><div class="stat-lbl">Verstöße</div></div></div><div style="font-size:12px;color:var(--muted)">Vorschau: ${nS.slice(0,4).map(s=>`${eById(s.empId)?.firstname} (${s.date} ${ST[s.type].label})`).join(', ')}${nS.length>4?' +'+( nS.length-4)+' weitere':''}</div></div></div>`;
@@ -1064,19 +1697,34 @@ async function runAI(){
 function acceptAI(){if(!aiRes)return;SHIFTS=[...SHIFTS.filter(s=>!s.ai),...aiRes];const c=aiRes.length;aiRes=null;$('ai-result-panel').classList.add('hidden');addAudit(`KI-Dienstplan übernommen (${c} Dienste)`);toast('KI-Dienste übernommen');navigate('schedule')}
 function rejectAI(){aiRes=null;$('ai-result-panel').classList.add('hidden');addAIMsg('Plan abgelehnt. Ich kann einen neuen Vorschlag erstellen.')}
 function findSub(){
-  const date=$('sub-date').value,qual=$('sub-qual').value;
-  const avail=EMPS.filter(emp=>{
-    if(qual&&!emp.qualifications.includes(qual))return false;
-    if(ABSENCES.some(a=>a.empId===emp.id&&a.from<=date&&a.to>=date))return false;
-    if(SHIFTS.some(s=>s.empId===emp.id&&s.date===date))return false;
-    if(emp.unavailDays.includes(new Date(date).getDay()))return false;
-    return true;
-  }).map(emp=>({emp,score:Math.round(60+Math.random()*40)})).sort((a,b)=>b.score-a.score).slice(0,5);
-  $('sub-results').innerHTML=avail.length===0?'<p style="font-size:12px;color:var(--muted)">Keine verfügbaren Mitarbeiter.</p>':
-    `<div style="font-size:11px;color:var(--muted);margin-bottom:6px">${avail.length} verfügbar:</div>`+
-    avail.map(({emp,score})=>`<div class="sub-item"><div style="width:24px;height:24px;border-radius:50%;background:${eCol(emp)};color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${eInit(emp)}</div><div style="flex:1"><div style="font-size:12px;font-weight:500">${eName(emp)}</div><div style="font-size:10px;color:var(--muted)">${emp.qualifications[0]||'Verfügbar'}</div></div><span class="sub-match">${score}%</span><button class="btn btn-ghost btn-sm" onclick="assignSub('${emp.id}','${date}')">Einteilen</button></div>`).join('');
+  const date=$('sub-date').value,type=$('sub-type').value,qual=$('sub-qual').value;
+  if(!date){toast('Bitte Datum wählen','error');return}
+  const results=AIService.findSubstitutes(date,type,qual).slice(0,5);
+  $('sub-results').innerHTML=results.length===0?'<p style="font-size:12px;color:var(--muted)">Keine geeigneten Mitarbeiter gefunden.</p>':
+    `<div style="font-size:11px;color:var(--muted);margin-bottom:6px">${results.length} geeignet für ${ST[type].label}dienst am ${fmtL(date)} – KI erklärt jede Auswahl:</div>`+
+    results.map(({emp,score,reasons})=>`
+      <div class="sub-item" style="align-items:flex-start;flex-wrap:wrap">
+        <div style="width:24px;height:24px;border-radius:50%;background:${eCol(emp)};color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${eInit(emp)}</div>
+        <div style="flex:1;min-width:140px"><div style="font-size:12px;font-weight:500">${eName(emp)}</div><div style="font-size:10px;color:var(--muted)">${emp.qualifications[0]||'Verfügbar'} · ${RL[emp.role]}</div></div>
+        <span class="sub-match">${score}%</span>
+        <button class="btn btn-ghost btn-sm" onclick="assignSub('${emp.id}','${date}','${type}')">Einteilen</button>
+        <div class="explain-box" style="width:100%"><strong style="font-size:11.5px">${emp.firstname} wurde vorgeschlagen, weil:</strong><ul>${reasons.map(r=>`<li>${r}</li>`).join('')}</ul></div>
+      </div>`).join('');
 }
-function assignSub(eid,date){SHIFTS.push({id:'s'+Date.now(),empId:eid,date,type:'early',note:'Einspringer',ai:false});$('sub-results').innerHTML='<p style="font-size:12px;color:var(--green)">✅ Einspringer eingeteilt!</p>';addAudit(`Einspringer: ${eName(eById(eid))} am ${date}`);toast('Einspringer eingeteilt')}
+function assignSub(eid,date,type='early'){SHIFTS.push({id:'s'+Date.now(),empId:eid,date,type,note:'Einspringer',ai:false});$('sub-results').innerHTML='<p style="font-size:12px;color:var(--green)">✅ Einspringer eingeteilt!</p>';addAudit(`Einspringer: ${eName(eById(eid))} am ${date} (${ST[type].label})`);toast('Einspringer eingeteilt');updViolBadge();updRiskBadge()}
+
+// ── KI-CHAT ──
+async function sendChat(presetQ){
+  const input=$('chat-input');
+  const q=(presetQ!==undefined?presetQ:input.value).trim();
+  if(!q)return;
+  addAIMsg(q,'user');
+  if(presetQ===undefined)input.value='';
+  addAILoad();
+  const res=await AIService.chatAnswer(q);
+  $('ai-load')?.remove();
+  addAIMsg(res.text);
+}
 
 function renderSettings(tab){
   $$('.settings-nav-btn').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick')?.includes(`'${tab}'`)));
