@@ -1369,8 +1369,10 @@ function doLogin(){
   $('topbar-av').textContent=av;$('topbar-av').style.background=col;
   if(u.role==='admin')show('admin-nav');else hide('admin-nav');
   if(u.role==='employee')$('add-emp-btn').style.display='none';
-  // Multi-Station-Feature: Bereichsleitung startet mit der eigenen Station vorausgewählt
-  selectedStations=u.role==='area_lead'?[e?.department||STATIONS[0].name]:[];
+  // Multi-Station-Feature: leere Auswahl = vollständiger, ungefilterter Dienstplan wie bisher.
+  // Über die Stationsauswahl im Dienstplan kann jede Leitungsrolle gezielt eine oder mehrere
+  // Stationen auswählen und deren Dienstpläne einzeln oder nebeneinander verwalten.
+  selectedStations=[];
   const ws=wkStart(new Date());const we=new Date(ws);we.setDate(we.getDate()+6);
   $('ai-from').value=ds(ws);$('ai-to').value=ds(we);$('sub-date').value=tod();
   initAIChat();navigate('dashboard');
@@ -1479,12 +1481,15 @@ function renderSched(){
   $('sched-subtitle').textContent=monthLabel;
   $('month-label-top').textContent=monthLabel;
 
-  // Multi-Station-Feature: Stationsleitung sieht nur die eigene Station, Bereichsleitung wählt
-  // frei mehrere Stationen aus. Alle anderen Rollen sehen wie bisher den vollständigen Dienstplan.
-  if(CU?.role==='area_lead'){show('station-picker-card');renderStationPicker();}
+  // Multi-Station-Feature: Stationsleitung sieht ausschließlich die eigene Station (kein Umschalten
+  // möglich). Alle anderen Leitungsrollen (Teamleitung, Leitung, Admin, Bereichs-/Pflegedienstleitung)
+  // bekommen die Stationsauswahl und können damit gezielt eine oder mehrere Stationen verwalten – ohne
+  // Auswahl entspricht die Ansicht exakt dem bisherigen, vollständigen Dienstplan.
+  const hasStationPicker=CU?.role&&CU.role!=='employee'&&CU.role!=='station_lead';
+  if(hasStationPicker){show('station-picker-card');renderStationPicker();}
   else hide('station-picker-card');
 
-  if(CU?.role==='area_lead'&&selectedStations.length>1){
+  if(hasStationPicker&&selectedStations.length>1){
     hide('sched-single-wrap');show('sched-multi-grid');
     $('sched-multi-grid').classList.add('multi-station-grid');
     const multiEmps=EMPS.filter(e=>selectedStations.includes(e.department));
@@ -1500,13 +1505,7 @@ function renderSched(){
   hide('sched-multi-grid');show('sched-single-wrap');
   let scopeEmps=EMPS;
   if(CU?.role==='station_lead')scopeEmps=getStationEmployees(eById(CU.empId)?.department);
-  else if(CU?.role==='area_lead')scopeEmps=selectedStations.length===1?getStationEmployees(selectedStations[0]):[];
-  if(CU?.role==='area_lead'&&scopeEmps.length===0){
-    renderSchedStats(days,[]);
-    $('sched-thead').innerHTML='';
-    $('sched-tbody').innerHTML='<tr><td style="padding:24px;text-align:center;color:var(--muted)">Bitte mindestens eine Station auswählen.</td></tr>';
-    return;
-  }
+  else if(hasStationPicker&&selectedStations.length===1)scopeEmps=getStationEmployees(selectedStations[0]);
   renderSchedStats(days,scopeEmps);
   const{thead,tbody}=buildSchedTable(days,scopeEmps);
   $('sched-thead').innerHTML=thead;
