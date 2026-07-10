@@ -569,7 +569,12 @@ input:focus,select:focus{border-color:var(--blue)}
           </div>
           <div class="card hidden" id="station-picker-card" style="margin-bottom:16px">
             <div class="card-title">Stationsauswahl</div>
-            <div id="station-picker-list" class="check-group" style="margin-bottom:10px"></div>
+            <div id="station-picker-list" style="margin-bottom:10px"></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+              <input type="text" id="new-station-name" placeholder="Neue Station, z.B. Station 4" style="max-width:200px">
+              <input type="text" id="new-station-area" placeholder="Bereich, z.B. Bereich West" style="max-width:200px">
+              <button class="btn btn-ghost btn-sm" onclick="addStation()">+ Station hinzufügen</button>
+            </div>
             <button class="btn btn-ghost btn-sm" onclick="openTransferModal()">🔁 Mitarbeiter zwischen Stationen verschieben</button>
           </div>
           <div class="stats-grid" id="sched-stats"></div>
@@ -962,28 +967,28 @@ const AT={vacation:{label:'Urlaub',icon:'🏖️',color:'#10b981'},sick:{label:'
 const QUALS=['Pflegefachkraft','Pflegehilfskraft','Wundversorgung','Palliativpflege','Beatmungspflege','Demenzbetreuung','Ersthelfer','Hygienebeauftragter'];
 const RL={employee:'Mitarbeiter',team_lead:'Teamleitung',manager:'Leitung',admin:'Administrator',station_lead:'Stationsleitung',area_lead:'Bereichsleitung',care_director:'Pflegedienstleitung'};
 const EC=['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444','#06b6d4','#6366f1','#ec4899','#14b8a6','#f43f5e'];
-// Stationen – Grundlage für die Mitarbeiterzuordnung und die Überstunden-Kennzahl je Bereich im Pflegepilot-Briefing
-const DEPARTMENTS=['Station 1','Station 2','Station 3'];
-// Mindestbesetzung je Schichttyp und Tag – Basis für Lückenerkennung (Pflegepilot, Dienstplan-Analyse)
+// Mindestbesetzung je Schichttyp und Tag – Basis für Lückenerkennung (Pflegepilot, Dienstplan-Analyse).
+// Gilt fürs gesamte Team und bleibt unverändert für Dashboard-Briefing/Verstöße/Dienstplan-Analyse,
+// unabhängig von der (jetzt frei anlegbaren) Anzahl an Stationen.
 const STAFFING_REQUIREMENTS={early:2,late:2,night:1};
 
 // ═══════════════════════════════════════════════════════════════════════
-// STATION (Multi-Station-Dienstplan für Bereichsleitungen)
+// STATION (Multi-Station-Dienstplan für Leitungsrollen)
 // ─────────────────────────────────────────────────────────────────────
 // Jede Station hat Name, Bereich und Sollbesetzung. "Mitarbeiter", "Dienstplan"
 // und "Istbesetzung" werden bewusst NICHT dupliziert, sondern live aus
 // EMPS/SHIFTS abgeleitet (siehe getStationEmployees()/getStationOverview() in
 // AIService) – das verhindert widersprüchliche Datenstände zwischen Station
-// und Mitarbeiterstamm. Der Name dient als Schlüssel und entspricht exakt
-// EMPS[*].department sowie den Einträgen in DEPARTMENTS.
+// und Mitarbeiterstamm. Der Name dient als Schlüssel und entspricht exakt EMPS[*].department.
+// STATIONS ist bewusst "let" (nicht "const"): Stationen können über addStation()/removeStation()
+// im Dienstplan hinzugefügt bzw. entfernt werden (Löschen nur, wenn keine Mitarbeiter mehr zugeordnet sind).
 // Sollbesetzung je Station ist bewusst niedriger als die globale STAFFING_REQUIREMENTS: Letztere gilt
-// fürs gesamte Team (7 Mitarbeiter) und bleibt unverändert für Dashboard-Briefing/Verstöße/Dienstplan-Analyse.
-// Die einzelne Station hat nur 2-3 Mitarbeiter, daher eine eigene, realistische Sollbesetzung.
-const STATIONS=DEPARTMENTS.map((name,i)=>({
-  name,
-  area:['Bereich Nord','Bereich Mitte','Bereich Süd'][i]||'Bereich Nord',
-  targetStaffing:{early:1,late:1,night:1},
-}));
+// fürs gesamte Team, die einzelne Station hat nur wenige Mitarbeiter.
+let STATIONS=[
+  {name:'Station 1',area:'Bereich Nord',targetStaffing:{early:1,late:1,night:1}},
+  {name:'Station 2',area:'Bereich Mitte',targetStaffing:{early:1,late:1,night:1}},
+  {name:'Station 3',area:'Bereich Süd',targetStaffing:{early:1,late:1,night:1}},
+];
 function getStationByName(name){return STATIONS.find(s=>s.name===name)}
 function getStationEmployees(stationName){return EMPS.filter(e=>e.department===stationName)}
 let EMPS=[
@@ -1155,9 +1160,9 @@ const AIService={
   },
   getSickToday(){return ABSENCES.filter(a=>(a.type==='sick'||a.type==='child_sick')&&a.from<=tod()&&a.to>=tod())},
   getDepartmentOvertime(ws=weekStart){
-    return DEPARTMENTS.map(dep=>{
-      let ot=0;EMPS.filter(e=>e.department===dep).forEach(e=>{const h=hoursInWeek(e.id,ws);if(h>e.weeklyHours)ot+=(h-e.weeklyHours)});
-      return{department:dep,overtimeHours:ot};
+    return STATIONS.map(st=>{
+      let ot=0;EMPS.filter(e=>e.department===st.name).forEach(e=>{const h=hoursInWeek(e.id,ws);if(h>e.weeklyHours)ot+=(h-e.weeklyHours)});
+      return{department:st.name,overtimeHours:ot};
     });
   },
 
@@ -1466,12 +1471,38 @@ function renderSchedStats(days,emps){
     <div class="stat-card green"><div class="stat-val">${emps.length}</div><div class="stat-lbl">Mitarbeiter</div></div>`;
 }
 
-// Rendert die Checkbox-Liste zur Stationsauswahl (nur Bereichsleitung).
+// Rendert die Checkbox-Liste zur Stationsauswahl inkl. Löschen-Button je Station.
 function renderStationPicker(){
-  $('station-picker-list').innerHTML=STATIONS.map(st=>`<label class="check-item"><input type="checkbox" ${selectedStations.includes(st.name)?'checked':''} onchange="toggleStation('${st.name}')"> ${st.name} <span style="color:var(--muted)">(${st.area})</span></label>`).join('');
+  $('station-picker-list').innerHTML=STATIONS.length===0?'<p style="font-size:12px;color:var(--muted)">Keine Stationen angelegt.</p>':
+    STATIONS.map(st=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:3px 0">
+      <label class="check-item" style="flex:1;margin:0"><input type="checkbox" ${selectedStations.includes(st.name)?'checked':''} onchange="toggleStation('${st.name}')"> ${st.name} <span style="color:var(--muted)">(${st.area})</span></label>
+      <button class="btn btn-ghost btn-icon btn-sm" onclick="removeStation('${st.name}')" title="Station löschen">🗑</button>
+    </div>`).join('');
 }
 function toggleStation(name){
   selectedStations=selectedStations.includes(name)?selectedStations.filter(s=>s!==name):[...selectedStations,name];
+  renderSched();
+}
+function addStation(){
+  const name=$('new-station-name').value.trim();
+  const area=$('new-station-area').value.trim()||'Bereich Nord';
+  if(!name){toast('Bitte einen Stationsnamen eingeben','error');return}
+  if(STATIONS.some(s=>s.name===name)){toast('Diese Station existiert bereits','error');return}
+  STATIONS.push({name,area,targetStaffing:{early:1,late:1,night:1}});
+  $('new-station-name').value='';$('new-station-area').value='';
+  addAudit(`Station angelegt: ${name} (${area})`);
+  toast('Station hinzugefügt');
+  renderSched();
+}
+function removeStation(name){
+  const count=getStationEmployees(name).length;
+  if(count>0){toast(`Station kann nicht gelöscht werden – noch ${count} Mitarbeiter zugeordnet. Bitte zuerst verschieben.`,'error');return}
+  if(!confirm(`Station "${name}" wirklich löschen?`))return;
+  STATIONS=STATIONS.filter(s=>s.name!==name);
+  selectedStations=selectedStations.filter(s=>s!==name);
+  addAudit(`Station gelöscht: ${name}`);
+  toast('Station gelöscht','info');
   renderSched();
 }
 
@@ -1611,8 +1642,8 @@ function openEmpModal(id=''){
   $('emp-modal-title').textContent=emp?'Mitarbeiter bearbeiten':'Mitarbeiter anlegen';
   $('ef-first').value=emp?.firstname||'';$('ef-last').value=emp?.lastname||'';$('ef-email').value=emp?.email||'';$('ef-phone').value=emp?.phone||'';
   $('ef-role').value=emp?.role||'employee';$('ef-employment').value=emp?.employment||'fulltime';$('ef-weekly').value=emp?.weeklyHours||40;$('ef-vacation').value=emp?.vacationDays||30;
-  $('ef-station').innerHTML=DEPARTMENTS.map(d=>`<option value="${d}">${d}</option>`).join('');
-  $('ef-station').value=emp?.department||DEPARTMENTS[0];
+  $('ef-station').innerHTML=STATIONS.map(s=>`<option value="${s.name}">${s.name}</option>`).join('');
+  $('ef-station').value=emp?.department||STATIONS[0]?.name||'';
   $$('[name=pref]').forEach(c=>c.checked=emp?.shiftPrefs?.includes(c.value)||false);
   $$('[name=unavail]').forEach(c=>c.checked=emp?.unavailDays?.includes(+c.value)||false);
   $('qualif-list').innerHTML=QUALS.map(q=>`<label class="qualif-item"><input type="checkbox" name="qualif" value="${q}"${emp?.qualifications?.includes(q)?' checked':''}> ${q}</label>`).join('');
@@ -1640,7 +1671,7 @@ function saveEmployee(){
   const wishes={preferShift:$('ef-pref-shift').value||null,noNight:$('ef-no-night').checked,maxWeekends:$('ef-max-weekends').value?+$('ef-max-weekends').value:null,wishFreeDays:[...efWishFree]};
   const existing=id?eById(id):null;
   const data={firstname:first,lastname:last,email,phone:$('ef-phone').value,role:$('ef-role').value,employment:$('ef-employment').value,weeklyHours:+$('ef-weekly').value,vacationDays:+$('ef-vacation').value,shiftPrefs:prefs,unavailDays:unavail,qualifications:qualifs,wishes,
-    department:$('ef-station').value||DEPARTMENTS[0],lastSubDate:existing?.lastSubDate||ds(addDays(new Date(),-10))};
+    department:$('ef-station').value||STATIONS[0]?.name||'',lastSubDate:existing?.lastSubDate||ds(addDays(new Date(),-10))};
   if(id)EMPS=EMPS.map(e=>e.id===id?{...e,...data}:e);else EMPS.push({id:'e'+Date.now(),...data});
   closeModal('emp-modal');renderEmps();toast(id?'Mitarbeiter aktualisiert':'Mitarbeiter angelegt');addAudit(`${id?'Mitarbeiter aktualisiert':'Neuer Mitarbeiter'}: ${first} ${last}`);
 }
