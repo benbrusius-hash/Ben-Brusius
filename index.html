@@ -348,15 +348,6 @@ input:focus,select:focus{border-color:var(--blue)}
 .dash-tile-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;line-height:1}
 .dash-tile-lbl{font-size:11px;color:var(--muted);margin-top:4px}
 .dash-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.risk-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);margin-bottom:10px}
-.risk-light{width:16px;height:16px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 4px}
-.risk-light.green{background:var(--green);box-shadow:0 0 0 4px var(--green-bg)}
-.risk-light.amber{background:var(--amber);box-shadow:0 0 0 4px var(--amber-bg)}
-.risk-light.red{background:var(--red);box-shadow:0 0 0 4px var(--red-bg)}
-.risk-dept{font-size:13.5px;font-weight:600}
-.risk-label{font-size:11.5px;color:var(--muted);margin-top:1px}
-.risk-meta{margin-left:auto;text-align:right;font-size:11px;color:var(--muted)}
-.forecast-box{display:flex;align-items:flex-start;gap:10px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius);padding:14px 16px;margin-top:4px}
 .chat-ask-row{display:flex;gap:8px;margin-top:10px}
 .chat-ask-row input{flex:1}
 .chat-suggest{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
@@ -486,13 +477,6 @@ input:focus,select:focus{border-color:var(--blue)}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Wünsche
         </button>
       </div>
-      <div class="nav-section">
-        <span class="nav-lbl">Analyse</span>
-        <button class="nav-item" onclick="navigate('risk')">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>Personalrisiko
-          <span class="nav-badge" id="risk-badge" style="display:none;background:var(--amber)">!</span>
-        </button>
-      </div>
       <div class="nav-section hidden" id="admin-nav">
         <span class="nav-lbl">Verwaltung</span>
         <button class="nav-item" onclick="navigate('settings')">
@@ -542,7 +526,6 @@ input:focus,select:focus{border-color:var(--blue)}
             <div class="pilot-lines" id="pilot-lines"></div>
             <div class="pilot-actions">
               <button class="btn btn-ghost btn-sm" onclick="navigate('ai')">💬 Mit Pflegepilot sprechen</button>
-              <button class="btn btn-ghost btn-sm" onclick="navigate('risk')">🚦 Personalrisiko ansehen</button>
               <button class="btn btn-ghost btn-sm" onclick="navigate('schedule')">📋 Zum Dienstplan</button>
             </div>
           </div>
@@ -719,26 +702,6 @@ input:focus,select:focus{border-color:var(--blue)}
         <div id="view-wishes" class="view">
           <div class="ph"><div><h1>Wünsche</h1><p>Individuelle Dienstwünsche – werden von der KI bei Planung &amp; Einspringer-Suche berücksichtigt</p></div></div>
           <div class="card"><div id="wishes-list"></div></div>
-        </div>
-
-        <!-- PERSONALRISIKO -->
-        <div id="view-risk" class="view">
-          <div class="ph">
-            <div><h1>Personalrisiko</h1><p>Ampelsystem &amp; Dienstplan je Station · simulierte Prognose</p></div>
-            <div class="ph-actions">
-              <div style="display:flex;align-items:center;gap:4px">
-                <button class="btn btn-ghost btn-sm" onclick="changeMonth(-1)">‹</button>
-                <span id="risk-month-label" style="font-size:13px;font-weight:600;min-width:110px;text-align:center;text-transform:capitalize"></span>
-                <button class="btn btn-ghost btn-sm" onclick="changeMonth(1)">›</button>
-                <button class="btn btn-ghost btn-sm" onclick="goToday()">Heute</button>
-              </div>
-            </div>
-          </div>
-          <div class="card" style="margin-bottom:16px">
-            <div class="card-title">Prognose</div>
-            <div class="forecast-box"><span style="font-size:20px">🔮</span><div><div id="risk-forecast" style="font-size:13.5px"></div><div style="font-size:11px;color:var(--muted);margin-top:4px">Basierend auf geplantem Urlaub examinierter Pflegekräfte in den nächsten 4 Wochen (simulierte Daten).</div></div></div>
-          </div>
-          <div id="risk-stations"></div>
         </div>
 
         <!-- EINSTELLUNGEN -->
@@ -961,9 +924,9 @@ const AT={vacation:{label:'Urlaub',icon:'🏖️',color:'#10b981'},sick:{label:'
 const QUALS=['Pflegefachkraft','Pflegehilfskraft','Wundversorgung','Palliativpflege','Beatmungspflege','Demenzbetreuung','Ersthelfer','Hygienebeauftragter'];
 const RL={employee:'Mitarbeiter',team_lead:'Teamleitung',manager:'Leitung',admin:'Administrator'};
 const EC=['#3b82f6','#8b5cf6','#10b981','#f59e0b','#ef4444','#06b6d4','#6366f1','#ec4899','#14b8a6','#f43f5e'];
-// Stationen – Grundlage für Personalrisiko- und Kostenauswertung je Bereich
+// Stationen – Grundlage für die Mitarbeiterzuordnung und die Überstunden-Kennzahl je Bereich im Pflegepilot-Briefing
 const DEPARTMENTS=['Station 1','Station 2','Station 3'];
-// Mindestbesetzung je Schichttyp und Tag – Basis für Lückenerkennung (Pflegepilot, Dienstplan-Analyse, Personalrisiko)
+// Mindestbesetzung je Schichttyp und Tag – Basis für Lückenerkennung (Pflegepilot, Dienstplan-Analyse)
 const STAFFING_REQUIREMENTS={early:2,late:2,night:1};
 let EMPS=[
   {id:'e1',firstname:'Anna',lastname:'Müller',role:'manager',employment:'fulltime',weeklyHours:40,qualifications:['Pflegefachkraft','Palliativpflege','Ersthelfer'],shiftPrefs:['early','late'],unavailDays:[],vacationDays:30,email:'anna.mueller@pflege.de',phone:'+49 151 1001 0001',department:'Station 1',wishes:{preferShift:'early',noNight:false,maxWeekends:null,wishFreeDays:[]},lastSubDaysAgo:12},
@@ -1039,12 +1002,6 @@ function seedDynamicDemoData(){
   const today=new Date();
   TRAININGS.forEach(t=>{t.expires=ds(addDays(today,t.expiresInDays))});
   EMPS.forEach(e=>{e.lastSubDate=ds(addDays(today,-(e.lastSubDaysAgo||10)))});
-  // Demo-Urlaub einer examinierten Pflegekraft in ~3 Wochen, damit die Personalrisiko-Prognose
-  // (AIService.computeRisk) direkt eine plausible Vorhersage zeigen kann.
-  const riskDemo=ABSENCES.find(a=>a.id==='a-risk-demo');
-  const from=ds(addDays(today,19)),to=ds(addDays(today,26));
-  if(riskDemo){riskDemo.from=from;riskDemo.to=to}
-  else ABSENCES.push({id:'a-risk-demo',empId:'e4',type:'vacation',from,to,note:'Sommerurlaub'});
 }
 function show(i){$(i)&&$(i).classList.remove('hidden')}
 function hide(i){$(i)&&$(i).classList.add('hidden')}
@@ -1090,7 +1047,7 @@ function getViols(){return chkViols(SHIFTS,EMPS)}
 // PFLEGEPILOT — KI-SERVICE-SCHICHT
 // ─────────────────────────────────────────────────────────────────────
 // Alle KI-Funktionen (Begrüßung, Chat, Dienstplan-Analyse, Einspringer-Suche,
-// Personalrisiko, Schichttausch-Prüfung) laufen zentral über
+// Schichttausch-Prüfung) laufen zentral über
 // dieses Objekt. Die Logik arbeitet heute regelbasiert auf den lokalen
 // Demo-Daten (EMPS/SHIFTS/ABSENCES/TRAININGS) – exakt an den Stellen, die
 // mit "INTEGRATION:" markiert sind, wird später Integrations.openai über
@@ -1230,27 +1187,6 @@ const AIService={
     return EMPS.map(e=>this.evalCandidate(e,date,type,qualFilter)).filter(c=>!c.excluded).sort((a,b)=>b.score-a.score);
   },
 
-  // Personalrisiko: Ampel je Station + einfache Prognose (simulierte Daten).
-  computeRisk(){
-    const deptOT=this.getDepartmentOvertime();
-    const sickToday=this.getSickToday();
-    const gaps=this.getStaffingGaps(wkDays(weekStart));
-    const departments=DEPARTMENTS.map(dep=>{
-      const ot=deptOT.find(d=>d.department===dep)?.overtimeHours||0;
-      const deptSick=sickToday.filter(a=>eById(a.empId)?.department===dep).length;
-      let level='green',label='Stabil';
-      if(ot>=12||deptSick>=2){level='red';label='Kritische Unterbesetzung';}
-      else if(ot>=6||deptSick>=1){level='amber';label='Personalengpass wahrscheinlich';}
-      return{department:dep,level,label,overtimeHours:Math.round(ot),sickToday:deptSick,headcount:EMPS.filter(e=>e.department===dep).length};
-    });
-    const upcomingVacation=ABSENCES.filter(a=>a.type==='vacation'&&a.from>=tod()&&a.from<=ds(addDays(new Date(),28)));
-    const affected=[...new Set(upcomingVacation.map(a=>a.empId))].filter(id=>eById(id)?.qualifications.includes('Pflegefachkraft'));
-    const forecastWeek=isoWk(addDays(new Date(),21));
-    const forecastText=affected.length>0?`In der Kalenderwoche ${forecastWeek} ${affected.length===1?'fehlt voraussichtlich eine examinierte Pflegekraft':'fehlen voraussichtlich '+affected.length+' examinierte Pflegekräfte'} durch geplanten Urlaub.`:'Für die kommenden Wochen ist laut aktueller Planung keine kritische Unterbesetzung zu erwarten.';
-    const overall=departments.some(d=>d.level==='red')?'red':departments.some(d=>d.level==='amber')?'amber':'green';
-    return{departments,overall,forecastText,openShifts:gaps.length};
-  },
-
   // Schichttausch-Prüfung: ArbZG, Qualifikation, Ruhezeiten, Vertragsstunden.
   validateSwap(shiftAId,shiftBId){
     const a=SHIFTS.find(s=>s.id===shiftAId),b=SHIFTS.find(s=>s.id===shiftBId);
@@ -1290,7 +1226,7 @@ function doLogin(){
 function doLogout(){CU=null;hide('app-screen');$('login-screen').classList.remove('hidden')}
 function toggleSidebar(){const sb=$('sidebar');sb.classList.toggle('open');$('sidebar-overlay').style.display=sb.classList.contains('open')?'block':'none'}
 
-const VT={'dashboard':'Dashboard','schedule':'Dienstplan','ai':'KI-Assistent','violations':'Verstöße','swap':'Schichttausch','employees':'Mitarbeiter','absences':'Abwesenheiten','workhours':'Arbeitszeitkonto','wishes':'Wünsche','risk':'Personalrisiko','settings':'Einstellungen','audit':'Audit-Log'};
+const VT={'dashboard':'Dashboard','schedule':'Dienstplan','ai':'KI-Assistent','violations':'Verstöße','swap':'Schichttausch','employees':'Mitarbeiter','absences':'Abwesenheiten','workhours':'Arbeitszeitkonto','wishes':'Wünsche','settings':'Einstellungen','audit':'Audit-Log'};
 function navigate(v){
   $$('.view').forEach(el=>el.classList.remove('active'));
   $$('.nav-item').forEach(el=>el.classList.remove('active'));
@@ -1306,11 +1242,9 @@ function navigate(v){
   if(v==='absences')renderAbs();
   if(v==='workhours')renderWH();
   if(v==='wishes')renderWishes();
-  if(v==='risk')renderRisk();
   if(v==='settings')renderSettings('facility');
   if(v==='audit')renderAudit();
   updViolBadge();
-  updRiskBadge();
 }
 
 function updViolBadge(){
@@ -1322,17 +1256,15 @@ function updViolBadge(){
 function changeMonth(n){
   schedMonth=new Date(schedMonth.getFullYear(),schedMonth.getMonth()+n,1);
   if($('view-schedule').classList.contains('active'))renderSched();
-  if($('view-risk').classList.contains('active'))renderRisk();
 }
 function goToday(){
   schedMonth=monthStart(new Date());
   if($('view-schedule').classList.contains('active'))renderSched();
-  if($('view-risk').classList.contains('active'))renderRisk();
 }
 
-// Baut Kopf- und Körperzeilen einer Dienstplan-Tabelle für beliebige Tage/Mitarbeiter.
-// Wird sowohl vom Dienstplan (alle Mitarbeiter) als auch von der Personalrisiko-Stationsansicht
-// (nur Mitarbeiter der jeweiligen Station) verwendet, inkl. Personalzähler- und Stunden-Spalte.
+// Baut Kopf- und Körperzeilen einer Dienstplan-Tabelle für beliebige Tage/Mitarbeiter,
+// inkl. Personalzähler- und Stunden-Spalte. Nimmt bewusst eine Mitarbeiterliste entgegen,
+// damit sie sich später auch für gefilterte Ansichten (z.B. je Station) wiederverwenden lässt.
 function buildSchedTable(days,employees){
   const td=tod();
   let thead='<tr><th>Mitarbeiter</th>';
@@ -1443,7 +1375,7 @@ function delEmployee(id){
   ABSENCES=ABSENCES.filter(a=>a.empId!==id);
   TRAININGS=TRAININGS.filter(t=>t.empId!==id);
   addAudit(`Mitarbeiter gelöscht: ${eName(emp)}`);
-  renderEmps();updViolBadge();updRiskBadge();
+  renderEmps();updViolBadge();
   toast('Mitarbeiter gelöscht','info');
 }
 let efWishFree=[];
@@ -1485,7 +1417,7 @@ function saveEmployee(){
   const data={firstname:first,lastname:last,email,phone:$('ef-phone').value,role:$('ef-role').value,employment:$('ef-employment').value,weeklyHours:+$('ef-weekly').value,vacationDays:+$('ef-vacation').value,shiftPrefs:prefs,unavailDays:unavail,qualifications:qualifs,wishes,
     department:$('ef-station').value||DEPARTMENTS[0],lastSubDate:existing?.lastSubDate||ds(addDays(new Date(),-10))};
   if(id)EMPS=EMPS.map(e=>e.id===id?{...e,...data}:e);else EMPS.push({id:'e'+Date.now(),...data});
-  closeModal('emp-modal');renderEmps();updRiskBadge();toast(id?'Mitarbeiter aktualisiert':'Mitarbeiter angelegt');addAudit(`${id?'Mitarbeiter aktualisiert':'Neuer Mitarbeiter'}: ${first} ${last}`);
+  closeModal('emp-modal');renderEmps();toast(id?'Mitarbeiter aktualisiert':'Mitarbeiter angelegt');addAudit(`${id?'Mitarbeiter aktualisiert':'Neuer Mitarbeiter'}: ${first} ${last}`);
 }
 function showEmpTab(t,btn){
   ['base','work','qualif','wishes'].forEach(x=>$(`emp-tab-${x}`).classList.toggle('active',x===t));
@@ -1543,30 +1475,6 @@ function renderWishes(){
   }).join('');
 }
 
-// ── PERSONALRISIKO (AMPEL + DIENSTPLAN JE STATION) ──
-function renderRisk(){
-  const risk=AIService.computeRisk();
-  $('risk-month-label').textContent=schedMonth.toLocaleDateString('de-DE',{month:'long',year:'numeric'});
-  $('risk-forecast').textContent=risk.forecastText;
-  const days=monthDays(schedMonth);
-  $('risk-stations').innerHTML=risk.departments.map(d=>{
-    const stationEmps=EMPS.filter(e=>e.department===d.department);
-    const table=stationEmps.length===0?'<p style="font-size:12px;color:var(--muted)">Keine Mitarbeiter dieser Station zugeordnet.</p>':(()=>{
-      const{thead,tbody}=buildSchedTable(days,stationEmps);
-      return`<div class="sched-wrap"><div class="sched-scroll"><table class="sched-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div></div>`;
-    })();
-    return`<div class="card" style="margin-bottom:16px">
-      <div class="risk-row" style="border:none;padding:0;margin-bottom:14px;background:transparent">
-        <div class="risk-light ${d.level}"></div>
-        <div><div class="risk-dept">${d.department}</div><div class="risk-label">${d.label}</div></div>
-        <div class="risk-meta">${d.headcount} Mitarbeiter · ${d.overtimeHours}h Überstunden${d.sickToday?' · '+d.sickToday+' krank heute':''}</div>
-      </div>
-      ${table}
-    </div>`;
-  }).join('');
-  updRiskBadge();
-}
-
 // ── SCHICHTTAUSCH ──
 function swapOptions(){
   const days=monthDays(schedMonth).map(ds);
@@ -1603,7 +1511,7 @@ function executeSwap(id){
   SHIFTS=SHIFTS.map(s=>s.id===sw.shiftAId?{...s,empId:sw.empB.id}:s.id===sw.shiftBId?{...s,empId:sw.empA.id}:s);
   sw.executed=true;
   addAudit(`Schichttausch durchgeführt: ${eName(sw.empA)} ⇄ ${eName(sw.empB)}`);
-  toast('Tausch durchgeführt');renderSwap();updViolBadge();updRiskBadge();
+  toast('Tausch durchgeführt');renderSwap();updViolBadge();
 }
 
 // ── DASHBOARD / PFLEGEPILOT ──
@@ -1636,11 +1544,6 @@ function renderDashboard(){
   if(expiring.length)suggestions.push(`Fortbildung „${expiring[0].name}" für ${eName(eById(expiring[0].empId))} rechtzeitig verlängern.`);
   if(!suggestions.length)suggestions.push('Aktuell keine dringenden Maßnahmen – der Dienstplan ist stabil.');
   $('dash-suggestions').innerHTML=suggestions.map(s=>`<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);font-size:12.5px"><span>💡</span><span>${s}</span></div>`).join('');
-}
-function updRiskBadge(){
-  const r=AIService.computeRisk();const b=$('risk-badge');
-  if(r.overall==='green'){b.style.display='none';return}
-  b.style.display='';b.style.background=r.overall==='red'?'var(--red)':'var(--amber)';b.textContent=r.overall==='red'?'!':'~';
 }
 
 // ── KI-DIENSTPLAN-ANALYSE ──
@@ -1719,7 +1622,7 @@ function findSub(){
         <div class="explain-box" style="width:100%"><strong style="font-size:11.5px">${emp.firstname} wurde vorgeschlagen, weil:</strong><ul>${reasons.map(r=>`<li>${r}</li>`).join('')}</ul></div>
       </div>`).join('');
 }
-function assignSub(eid,date,type='early'){SHIFTS.push({id:'s'+Date.now(),empId:eid,date,type,note:'Einspringer',ai:false});$('sub-results').innerHTML='<p style="font-size:12px;color:var(--green)">✅ Einspringer eingeteilt!</p>';addAudit(`Einspringer: ${eName(eById(eid))} am ${date} (${ST[type].label})`);toast('Einspringer eingeteilt');updViolBadge();updRiskBadge()}
+function assignSub(eid,date,type='early'){SHIFTS.push({id:'s'+Date.now(),empId:eid,date,type,note:'Einspringer',ai:false});$('sub-results').innerHTML='<p style="font-size:12px;color:var(--green)">✅ Einspringer eingeteilt!</p>';addAudit(`Einspringer: ${eName(eById(eid))} am ${date} (${ST[type].label})`);toast('Einspringer eingeteilt');updViolBadge()}
 
 // ── KI-CHAT ──
 async function sendChat(presetQ){
