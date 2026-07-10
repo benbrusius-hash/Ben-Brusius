@@ -87,7 +87,7 @@ input:focus,select:focus{border-color:var(--blue)}
 .sched-scroll{overflow-x:auto}
 .sched-table{width:100%;border-collapse:collapse;min-width:720px}
 .sched-table th{padding:10px 6px;text-align:center;border-bottom:1px solid var(--border);border-right:1px solid var(--border);background:var(--bg);font-size:11px;font-weight:600;color:var(--muted)}
-.sched-table th:first-child{text-align:left;padding-left:12px;width:120px}
+.sched-table th:first-child{text-align:left;padding-left:12px;width:150px}
 .sched-table th:last-child{border-right:none}
 .th-dow{font-size:12px;font-weight:600;color:var(--text);display:block}
 .th-date{font-size:10px;color:var(--muted)}
@@ -1424,35 +1424,44 @@ function goToday(){
 // Baut Kopf- und Körperzeilen einer Dienstplan-Tabelle für beliebige Tage/Mitarbeiter,
 // inkl. Personalzähler- und Stunden-Spalte. Nimmt bewusst eine Mitarbeiterliste entgegen,
 // damit sie sich später auch für gefilterte Ansichten (z.B. je Station) wiederverwenden lässt.
+// Sortiert Mitarbeiterzeilen für den Dienstplan nach Rollen-Hierarchie (Leitung zuerst), dann
+// alphabetisch nach Nachname – ergibt eine stabile, nachvollziehbare Reihenfolge in jeder Tabelle.
+const SCHED_ROLE_ORDER={manager:0,care_director:1,area_lead:2,station_lead:3,team_lead:4,admin:5,employee:6};
+function sortSchedEmployees(emps){
+  return[...emps].sort((a,b)=>(SCHED_ROLE_ORDER[a.role]??9)-(SCHED_ROLE_ORDER[b.role]??9)||a.lastname.localeCompare(b.lastname,'de'));
+}
+
 function buildSchedTable(days,employees){
+  employees=sortSchedEmployees(employees);
   const td=tod();
   let thead='<tr><th>Mitarbeiter</th>';
   days.forEach(d=>{const x=ds(d);thead+=`<th class="${x===td?'th-today':''}"><span class="th-dow">${d.toLocaleDateString('de-DE',{weekday:'short'})}</span><span class="th-date">${fmt(d)}</span></th>`});
-  thead+='<th>Std.</th></tr>';
-  let tbody='',grandTotal=0;
+  thead+='</tr>';
+  let tbody='';
   employees.forEach(emp=>{
     const col=eCol(emp);let empTotal=0;
-    let row=`<tr class="sched-row"><td class="row-emp"><div style="display:flex;align-items:center;gap:6px"><div style="width:24px;height:24px;border-radius:50%;background:${col};color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${eInit(emp)}</div><div class="emp-row-name">${emp.firstname}<br>${emp.lastname}</div></div></td>`;
+    let dayCells='';
     days.forEach(d=>{
       const x=ds(d);
       const dS=SHIFTS.filter(s=>s.empId===emp.id&&s.date===x);
       const ab=ABSENCES.find(a=>a.empId===emp.id&&a.from<=x&&a.to>=x);
-      row+=`<td class="shift-cell" style="${x===td?'background:#fafbff':''}">`;
-      if(ab){const a=AT[ab.type];row+=`<div class="absence-chip">${a?.icon} ${a?.label}</div>`}
+      dayCells+=`<td class="shift-cell" style="${x===td?'background:#fafbff':''}">`;
+      if(ab){const a=AT[ab.type];dayCells+=`<div class="absence-chip">${a?.icon} ${a?.label}</div>`}
       else{
-        dS.forEach(s=>{const st=ST[s.type];empTotal+=st.h||0;row+=`<div class="shift-chip" style="background:${st.bg};color:${st.color}"><span class="chip-lbl">${st.label}</span><span class="chip-time">${st.start}–${st.end}</span><button class="chip-del" onclick="delShift('${s.id}')" style="color:${st.color}">✕</button>${s.ai?`<span style="font-size:8px;position:absolute;bottom:2px;right:3px;opacity:.5;color:${st.color}">KI</span>`:''}</div>`});
-        if(!ab&&(CU?.role!=='employee'||CU?.empId===emp.id))row+=`<button class="add-btn" onclick="openShiftModal('${emp.id}','${x}')">+</button>`;
+        dS.forEach(s=>{const st=ST[s.type];empTotal+=st.h||0;dayCells+=`<div class="shift-chip" style="background:${st.bg};color:${st.color}"><span class="chip-lbl">${st.label}</span><span class="chip-time">${st.start}–${st.end}</span><button class="chip-del" onclick="delShift('${s.id}')" style="color:${st.color}">✕</button>${s.ai?`<span style="font-size:8px;position:absolute;bottom:2px;right:3px;opacity:.5;color:${st.color}">KI</span>`:''}</div>`});
+        if(!ab&&(CU?.role!=='employee'||CU?.empId===emp.id))dayCells+=`<button class="add-btn" onclick="openShiftModal('${emp.id}','${x}')">+</button>`;
       }
-      row+='</td>';
+      dayCells+='</td>';
     });
-    grandTotal+=empTotal;
-    row+=`<td class="mono" style="text-align:center;font-weight:600;background:var(--bg)">${empTotal}h</td></tr>`;
-    tbody+=row;
+    // Soll-Stunden (Monat) nach derselben Formel wie in Mitarbeiter-Kachel/Arbeitszeitkonto: weeklyHours/5*21
+    const targetH=Math.round(emp.weeklyHours/5*21);
+    const rowEmp=`<td class="row-emp"><div style="display:flex;align-items:center;gap:6px"><div style="width:24px;height:24px;border-radius:50%;background:${col};color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0">${eInit(emp)}</div><div><div class="emp-row-name">${emp.firstname}<br>${emp.lastname}</div><div style="font-size:9.5px;color:var(--muted);margin-top:2px">${RL[emp.role]||emp.role}</div><div style="font-size:9.5px;color:var(--muted)" class="mono">Soll ${targetH}h · Ist ${empTotal}h</div></div></div></td>`;
+    tbody+=`<tr class="sched-row">${rowEmp}${dayCells}</tr>`;
   });
   const empIds=employees.map(e=>e.id);
   let footer='<tr class="sched-row"><td class="row-emp" style="font-weight:700">Personal/Tag</td>';
   days.forEach(d=>{const x=ds(d);const count=SHIFTS.filter(s=>empIds.includes(s.empId)&&s.date===x).length;footer+=`<td class="shift-cell" style="text-align:center;font-weight:700;color:var(--blue-dark)">${count||'–'}</td>`});
-  footer+=`<td class="mono" style="text-align:center;font-weight:700;background:var(--bg)">${grandTotal}h</td></tr>`;
+  footer+='</tr>';
   tbody+=footer;
   return{thead,tbody};
 }
